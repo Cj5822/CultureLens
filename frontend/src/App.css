@@ -326,6 +326,293 @@ html, body, #root {
   opacity: 0.6;
 }
 
+/* ── Map page layout (map + filter sidebar) ────────────────────────────────── */
+.cl-map-page {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+
+.cl-map-page__main {
+  flex: 1;
+  min-width: 0;
+  padding: 24px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Filter sidebar ────────────────────────────────────────────────────────── */
+:root {
+  --cl-filter-width: 268px;
+}
+
+.cl-filter-sidebar {
+  width: var(--cl-filter-width);
+  min-width: var(--cl-filter-width);
+  height: 100%;
+  background: var(--color-background);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.cl-filter-sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 16px 8px;
+  flex-shrink: 0;
+}
+
+.cl-filter-sidebar__title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-foreground);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cl-filter-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background: var(--cl-accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 999px;
+  line-height: 1;
+}
+
+.cl-filter-clear {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 5px;
+  background: transparent;
+  color: var(--color-muted-foreground);
+  font-size: 11px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.cl-filter-clear:hover {
+  color: var(--color-foreground);
+  border-color: var(--color-foreground);
+}
+
+.cl-filter-sidebar__results {
+  padding: 0 16px 10px;
+  font-size: 11.5px;
+  color: var(--color-muted-foreground);
+  flex-shrink: 0;
+  margin: 0;
+}
+
+.cl-filter-search {
+  position: relative;
+  padding: 0 12px 10px;
+  flex-shrink: 0;
+}
+
+.cl-filter-search__icon {
+  position: absolute;
+  left: 22px;
+  top: 50%;
+  transform: translateY(-60%);
+  color: var(--color-muted-foreground);
+  pointer-events: none;
+}
+
+.cl-filter-search__input {
+  width: 100%;
+  padding: 6px 10px 6px 30px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-size: 12px;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+}
+
+.cl-filter-search__input:focus {
+  outline: 2px solid var(--cl-accent);
+  outline-offset: 1px;
+  border-color: var(--cl-accent);
+}
+
+.cl-filter-sidebar__sections {
+  flex: 1;
+  overflow-y: auto;
+  border-top: 1px solid var(--color-border);
+}
+
+/* ── Filter section ────────────────────────────────────────────────────────── */
+.cl-filter-section {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.cl-filter-section__toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: transparent;
+  border: none;
+  color: var(--color-foreground);
+  font-size: 12px;
+  font-weight: 550;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s;
+}
+
+.cl-filter-section__toggle:hover {
+  background: var(--color-muted);
+}
+
+.cl-filter-section__body {
+  padding: 6px 14px 10px;
+}
+
+/* ── Multi-select filter ────────────────────────────────────────────────────── */
+.cl-multiselect {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cl-multiselect__search {
+  width: 100%;
+  padding: 4px 8px;
+  margin-bottom: 6px;
+  border: 1px solid var(--color-border);
+  border-radius: 5px;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-size: 11.5px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.cl-multiselect__list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cl-multiselect__item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  padding: 2px 0;
+}
+
+.cl-multiselect__checkbox {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+  accent-color: var(--cl-accent);
+  cursor: pointer;
+}
+
+.cl-multiselect__label {
+  font-size: 12px;
+  color: var(--color-foreground);
+  line-height: 1.4;
+  text-transform: capitalize;
+}
+
+.cl-multiselect__count {
+  margin: 6px 0 0;
+  font-size: 11px;
+  color: var(--cl-accent);
+  font-weight: 550;
+}
+
+.cl-multiselect__empty {
+  font-size: 11.5px;
+  color: var(--color-muted-foreground);
+  margin: 4px 0;
+}
+
+/* ── Entity marker (Leaflet DivIcon container) ──────────────────────────────── */
+.cl-entity-marker {
+  background: none !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: filter 0.15s ease !important;
+}
+
+.cl-entity-marker:hover {
+  /* No transform: scale() here — scaling the element changes its visual bounds
+     without changing its DOM hit area, causing mouseover/mouseout to fire in a
+     rapid loop (flicker). Use filter only, which doesn't affect hit-testing. */
+  filter: brightness(1.2) !important;
+}
+
+/* ── Entity popup ───────────────────────────────────────────────────────────── */
+.cl-popup-content {
+  font-family: 'Geist Variable', sans-serif;
+  font-size: 12.5px;
+  min-width: 200px;
+  max-width: 260px;
+}
+
+.cl-popup-name {
+  font-weight: 600;
+  font-size: 13px;
+  margin: 0 0 3px;
+  line-height: 1.35;
+}
+
+.cl-popup-meta {
+  color: #666;
+  font-size: 11.5px;
+  margin: 0 0 8px;
+}
+
+.cl-popup-row {
+  margin: 4px 0;
+  line-height: 1.4;
+}
+
+/* ── Map legend additions ───────────────────────────────────────────────────── */
+.cl-map-legend-divider {
+  width: 1px;
+  height: 16px;
+  background: var(--color-border);
+  margin: 0 2px;
+}
+
+.cl-map-legend-item--stakeholder::before {
+  background: #4f86c6;
+  border-radius: 50%;
+  opacity: 1;
+}
+
+.cl-map-legend-item--instrument::before {
+  background: #d64f4f;
+  border-radius: 2px;
+  transform: rotate(45deg);
+  opacity: 1;
+}
+
 /* Tooltip styling */
 .cl-map-tooltip {
   font-family: 'Geist Variable', sans-serif;

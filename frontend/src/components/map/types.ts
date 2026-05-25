@@ -13,4 +13,6 @@ export interface WorldMapProps {
   height?: string
   className?: string
   onCountryClick?: (countryCode: string, name: string) => void
+  /** Components rendered inside the MapContainer (e.g. EntityMarkers) */
+  children?: React.ReactNode
 }

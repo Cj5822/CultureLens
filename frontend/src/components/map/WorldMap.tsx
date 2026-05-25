@@ -110,6 +110,7 @@ export function WorldMap({
   height = '100vh',
   className,
   onCountryClick,
+  children,
 }: WorldMapProps) {
   // Tracks the last hovered layer so we can force-reset it if mouseout was swallowed
   // by bringToFront()'s DOM re-insertion (a known Leaflet quirk).
@@ -195,6 +196,7 @@ export function WorldMap({
         onEachFeature={onEachFeature}
         key="world-atlas-110m"
       />
+      {children}
     </MapContainer>
   )
 }
