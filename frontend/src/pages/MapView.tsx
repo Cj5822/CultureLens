@@ -6,38 +6,73 @@ import { DEFAULT_FILTERS } from '@/types/filters'
 import { WorldMap } from '@/components/map/WorldMap'
 import { EntityMarkers } from '@/components/map/EntityMarkers'
 import { FilterSidebar } from '@/components/filters/FilterSidebar'
+import { EntityDetailPanel } from '@/components/detail/EntityDetailPanel'
 import { filterEntities } from '@/utils/filterEntities'
 import { mockEntities } from '@/data/mockData'
+import { VisualizationProvider, useVisualizationContext } from '@/context/VisualizationContext'
+import { useVisualizationSync } from '@/hooks/useVisualizationSync'
 
 interface MapViewProps {
   // Legacy top-bar filters kept for interface compatibility with Dashboard
   filters: FilterState
 }
 
-export function MapView({ filters: _legacyFilters }: MapViewProps) {
-  const [entityFilters, setEntityFilters] = useState<EntityFilters>(DEFAULT_FILTERS)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
+// ─── Inner component — must be rendered inside VisualizationProvider ──────────
+
+interface MapViewContentProps {
+  entityFilters: EntityFilters
+  onFiltersChange: (f: EntityFilters) => void
+}
+
+function MapViewContent({ entityFilters, onFiltersChange }: MapViewContentProps) {
+  const [isPanelOpen, setIsPanelOpen] = useState(false)
+  const { selectedId, highlightedIds } = useVisualizationContext()
 
   const filteredEntities = useMemo(
     () => filterEntities(mockEntities, entityFilters),
     [entityFilters],
   )
 
-  // Derive sorted unique country list from the full (unfiltered) dataset
   const countries = useMemo(
     () => [...new Set(mockEntities.map((e) => e.country))].sort(),
     [],
   )
 
-  const handleMarkerClick = useCallback((entity: Entity) => {
-    setSelectedId((prev) => (prev === entity.id ? null : entity.id))
-  }, [])
+  const { selectedEntity, selectEntityById } = useVisualizationSync({
+    entities: filteredEntities,
+  })
+
+  const handleMarkerClick = useCallback(
+    (entity: Entity) => {
+      if (selectedId === entity.id) {
+        selectEntityById(null)
+        setIsPanelOpen(false)
+      } else {
+        selectEntityById(entity.id)
+        setIsPanelOpen(true)
+      }
+    },
+    [selectedId, selectEntityById],
+  )
+
+  const handleClosePanel = useCallback(() => {
+    selectEntityById(null)
+    setIsPanelOpen(false)
+  }, [selectEntityById])
+
+  const handleSelectConnection = useCallback(
+    (entity: Entity) => {
+      selectEntityById(entity.id)
+      setIsPanelOpen(true)
+    },
+    [selectEntityById],
+  )
 
   return (
     <div className="cl-map-page">
       <FilterSidebar
         filters={entityFilters}
-        onChange={setEntityFilters}
+        onChange={onFiltersChange}
         resultCount={filteredEntities.length}
         countries={countries}
       />
@@ -48,6 +83,7 @@ export function MapView({ filters: _legacyFilters }: MapViewProps) {
             <EntityMarkers
               entities={filteredEntities}
               selectedId={selectedId}
+              highlightedIds={highlightedIds}
               onMarkerClick={handleMarkerClick}
             />
           </WorldMap>
@@ -68,7 +104,30 @@ export function MapView({ filters: _legacyFilters }: MapViewProps) {
             </span>
           </div>
         </div>
+
+        <EntityDetailPanel
+          entity={selectedEntity}
+          entities={filteredEntities}
+          isOpen={isPanelOpen}
+          onClose={handleClosePanel}
+          onSelectConnection={handleSelectConnection}
+        />
       </div>
     </div>
+  )
+}
+
+// ─── MapView — public export, mounts the provider ────────────────────────────
+
+export function MapView({ filters: _legacyFilters }: MapViewProps) {
+  const [entityFilters, setEntityFilters] = useState<EntityFilters>(DEFAULT_FILTERS)
+
+  return (
+    <VisualizationProvider>
+      <MapViewContent
+        entityFilters={entityFilters}
+        onFiltersChange={setEntityFilters}
+      />
+    </VisualizationProvider>
   )
 }

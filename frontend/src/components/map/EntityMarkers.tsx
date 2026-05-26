@@ -127,16 +127,6 @@ export function EntityMarkers({
         },
       )
 
-      // ── Popup ─────────────────────────────────────────────────────────────────
-      marker.bindPopup(`
-        <div class="cl-popup-content">
-          <p class="cl-popup-name">${entity.name}</p>
-          <p class="cl-popup-meta">${entity.country}</p>
-          <p class="cl-popup-row"><strong>Thematic focus:</strong> ${entity.thematicFocus.join(', ')}</p>
-          <p class="cl-popup-row"><strong>Next steps:</strong> ${entity.recommendedNextSteps}</p>
-        </div>
-      `)
-
       // ── Events — bound exactly once per marker, never rebound on re-render ───
       marker.on('mouseover', (e: L.LeafletMouseEvent) => {
         // Stop the event reaching markers underneath (fixes flicker on overlap)
