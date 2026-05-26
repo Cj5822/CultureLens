@@ -1,10 +1,4 @@
-import type { FilterState } from '@/types';
-
-interface ClusterAnalysisProps {
-  filters: FilterState;
-}
-
-export function ClusterAnalysis({ filters: _filters }: ClusterAnalysisProps) {
+export function ClusterAnalysis() {
   return (
     <div className="cl-page">
       <div className="cl-page-card">
@@ -15,5 +9,5 @@ export function ClusterAnalysis({ filters: _filters }: ClusterAnalysisProps) {
         </div>
       </div>
     </div>
-  );
+  )
 }

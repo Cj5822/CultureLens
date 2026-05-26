@@ -1,53 +1,83 @@
-import { useState, useCallback } from 'react';
-import { Sidebar } from '@/components/layout/Sidebar';
-import { TopBar } from '@/components/layout/TopBar';
-import { MapView } from './MapView';
-import { Analytics } from './Analytics';
-import { ClusterAnalysis } from './ClusterAnalysis';
-import { NetworkGraph } from './NetworkGraph';
-import type { ViewType, FilterState } from '@/types';
+import { useState } from 'react'
+import { SlidersHorizontal } from 'lucide-react'
+import { Sidebar } from '@/components/layout/Sidebar'
+import { FilterSidebar } from '@/components/filters/FilterSidebar'
+import { MapView } from './MapView'
+import { Analytics } from './Analytics'
+import { ClusterAnalysis } from './ClusterAnalysis'
+import { NetworkGraph } from './NetworkGraph'
+import { FilterContextProvider, useFilterContext } from '@/context/FilterContext'
+import type { ViewType } from '@/types'
 
-const PAGE_COMPONENTS: Record<ViewType, React.FC<{ filters: FilterState }>> = {
-  map: MapView,
+// ─── Page registry ─────────────────────────────────────────────────────────────
+
+const PAGE_COMPONENTS: Record<ViewType, React.FC> = {
+  map:       MapView,
   analytics: Analytics,
-  cluster: ClusterAnalysis,
-  network: NetworkGraph,
-};
+  cluster:   ClusterAnalysis,
+  network:   NetworkGraph,
+}
 
-export function Dashboard() {
-  const [activeView, setActiveView] = useState<ViewType>('map');
-  const [filters, setFilters] = useState<FilterState>({
-    country: 'All',
-    organisationType: 'All',
-    competencyCategory: 'All',
-  });
+// ─── Shared filter sidebar (must be inside FilterContextProvider) ──────────────
 
-  const handleFilterChange = useCallback(
-    (key: keyof FilterState, value: string) => {
-      setFilters((prev) => ({ ...prev, [key]: value }));
-    },
-    [],
-  );
+interface FilterSidebarShellProps {
+  open: boolean
+  onCollapse: () => void
+}
 
-  const PageComponent = PAGE_COMPONENTS[activeView];
+function FilterSidebarShell({ open, onCollapse }: FilterSidebarShellProps) {
+  const { filters, setFilters, filteredEntities, countries } = useFilterContext()
+  if (!open) return null
 
   return (
-    <div className="cl-app">
-      <Sidebar
-        activeView={activeView}
-        onNavigate={setActiveView}
-      />
+    <FilterSidebar
+      filters={filters}
+      onChange={setFilters}
+      resultCount={filteredEntities.length}
+      countries={countries}
+      onCollapse={onCollapse}
+    />
+  )
+}
 
-      <div className="cl-main">
-        <TopBar
-          filters={filters}
-          onFilterChange={handleFilterChange}
+// ─── Dashboard ─────────────────────────────────────────────────────────────────
+
+export function Dashboard() {
+  const [activeView, setActiveView] = useState<ViewType>('map')
+  const [filtersOpen, setFiltersOpen] = useState(true)
+  const PageComponent = PAGE_COMPONENTS[activeView]
+
+  return (
+    <FilterContextProvider>
+      <div className="cl-app">
+        <Sidebar
+          activeView={activeView}
+          onNavigate={setActiveView}
         />
 
-        <main className="cl-content">
-          <PageComponent filters={filters} />
-        </main>
+        <FilterSidebarShell
+          open={filtersOpen}
+          onCollapse={() => setFiltersOpen(false)}
+        />
+
+        <div className={`cl-main${filtersOpen ? '' : ' cl-main--filters-hidden'}`}>
+          {/* Expand button — floats over the content when sidebar is hidden */}
+          {!filtersOpen && (
+            <button
+              type="button"
+              className="cl-filter-expand-btn"
+              onClick={() => setFiltersOpen(true)}
+              aria-label="Show filters"
+              title="Show filters"
+            >
+              <SlidersHorizontal size={14} aria-hidden />
+            </button>
+          )}
+          <main className="cl-content">
+            <PageComponent />
+          </main>
+        </div>
       </div>
-    </div>
-  );
+    </FilterContextProvider>
+  )
 }
