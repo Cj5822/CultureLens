@@ -128,8 +128,8 @@ export const mockStakeholders: Stakeholder[] = [
       "Research focuses on immigrant students' educational integration and equity in multilingual classrooms.",
     intendedAudience: "Researchers, teacher educators, policy makers",
     country: "Finland",
-    lat: 60.1699,
-    lng: 24.9384,
+    lat: 60.4518,
+    lng: 22.2666,
   },
   {
     id: "STK-FI-003",
@@ -155,8 +155,8 @@ export const mockStakeholders: Stakeholder[] = [
       "Specifically supports African and Middle Eastern diaspora communities in accessing cultural and civic participation.",
     intendedAudience: "Immigrant communities, NGO workers, local authorities",
     country: "Finland",
-    lat: 60.1699,
-    lng: 24.9384,
+    lat: 61.4978,
+    lng: 23.7610,
   },
 
   // --- Norway ---
@@ -215,8 +215,8 @@ export const mockStakeholders: Stakeholder[] = [
       "Research addresses gender and class intersections with migration in Norwegian educational contexts.",
     intendedAudience: "Researchers, practitioners, policy makers",
     country: "Norway",
-    lat: 59.9139,
-    lng: 10.7522,
+    lat: 60.3913,
+    lng: 5.3221,
   },
   {
     id: "STK-NO-003",
@@ -242,8 +242,8 @@ export const mockStakeholders: Stakeholder[] = [
       "Focuses on Romani, Sámi, and immigrant communities facing systemic discrimination.",
     intendedAudience: "Schools, workplaces, municipalities",
     country: "Norway",
-    lat: 59.9139,
-    lng: 10.7522,
+    lat: 63.4305,
+    lng: 10.3951,
   },
 
   // --- New Zealand & Pacific ---
@@ -515,8 +515,8 @@ export const mockStakeholders: Stakeholder[] = [
       "Focuses on second-generation immigrants and stateless persons facing racialised exclusion in Greece.",
     intendedAudience: "Immigrant communities, municipalities, educators",
     country: "Greece",
-    lat: 37.9838,
-    lng: 23.7275,
+    lat: 38.2466,
+    lng: 21.7346,
   },
 
   // --- Germany ---
@@ -579,8 +579,8 @@ export const mockStakeholders: Stakeholder[] = [
       "Critical research on racialisation and class in German schools informs equity-centred ITC approaches.",
     intendedAudience: "Researchers, teacher educators, curriculum designers",
     country: "Germany",
-    lat: 52.52,
-    lng: 13.405,
+    lat: 48.1351,
+    lng: 11.5820,
   },
   {
     id: "STK-DE-003",
@@ -606,8 +606,8 @@ export const mockStakeholders: Stakeholder[] = [
       "Addresses structural racism and antigypsyism in German institutions through policy advocacy.",
     intendedAudience: "Policy makers, NGOs, researchers",
     country: "Germany",
-    lat: 52.52,
-    lng: 13.405,
+    lat: 53.5511,
+    lng: 9.9937,
   },
 
   // --- Serbia ---
@@ -666,8 +666,8 @@ export const mockStakeholders: Stakeholder[] = [
       "Research emphasises Roma education, ethnic minority rights, and post-conflict reconciliation in the Western Balkans.",
     intendedAudience: "Researchers, policy makers, educators",
     country: "Serbia",
-    lat: 44.8176,
-    lng: 20.4633,
+    lat: 45.2671,
+    lng: 19.8335,
   },
   {
     id: "STK-RS-003",
@@ -693,8 +693,8 @@ export const mockStakeholders: Stakeholder[] = [
       "Exclusively focused on Roma educational inclusion and anti-discrimination in the Serbian education system.",
     intendedAudience: "Roma communities, schools, municipalities",
     country: "Serbia",
-    lat: 44.8176,
-    lng: 20.4633,
+    lat: 43.3209,
+    lng: 21.8954,
   },
 ];
 
@@ -727,9 +727,9 @@ export const mockInstruments: Instrument[] = [
     equityAddressed:
       "Explicitly requires member states to ensure all learners, including disadvantaged groups, develop key competences.",
     intendedAudience: "Education ministries, curriculum developers, schools",
-    country: "Belgium",
-    lat: 50.8503,
-    lng: 4.3517,
+    country: "Luxembourg",
+    lat: 49.6116,
+    lng: 6.1319,
   },
   {
     id: "INS-EU-002",
@@ -758,9 +758,9 @@ export const mockInstruments: Instrument[] = [
     equityAddressed:
       "Inclusion and diversity strand specifically targets organisations working with disadvantaged learners.",
     intendedAudience: "Educational institutions, youth organisations, NGOs",
-    country: "Belgium",
-    lat: 50.8503,
-    lng: 4.3517,
+    country: "Netherlands",
+    lat: 52.3676,
+    lng: 4.9041,
   },
 
   // --- Finland ---
@@ -787,8 +787,8 @@ export const mockInstruments: Instrument[] = [
       "Includes provisions for Finnish Sign Language, Sámi languages, and immigrant mother-tongue instruction.",
     intendedAudience: "Schools, teachers, local education authorities",
     country: "Finland",
-    lat: 60.1699,
-    lng: 24.9384,
+    lat: 65.0121,
+    lng: 25.4651,
   },
   {
     id: "INS-FI-002",
@@ -818,8 +818,8 @@ export const mockInstruments: Instrument[] = [
       "Targets schools in Itäinen and Koillinen districts with highest proportions of newly arrived immigrant students.",
     intendedAudience: "Teachers, school principals, community organisations",
     country: "Finland",
-    lat: 60.1699,
-    lng: 24.9384,
+    lat: 62.2426,
+    lng: 25.7473,
   },
 
   // --- Norway ---
@@ -847,8 +847,8 @@ export const mockInstruments: Instrument[] = [
       "Specifically targets anti-Semitism, anti-Muslim hatred, and anti-Romani discrimination in Norwegian public life.",
     intendedAudience: "Government agencies, schools, employers",
     country: "Norway",
-    lat: 59.9139,
-    lng: 10.7522,
+    lat: 58.9700,
+    lng: 5.7331,
   },
   {
     id: "INS-NO-002",
@@ -873,8 +873,8 @@ export const mockInstruments: Instrument[] = [
       "Contains a dedicated Sámi curriculum strand with culturally specific competence goals.",
     intendedAudience: "Schools, teachers, curriculum coordinators",
     country: "Norway",
-    lat: 59.9139,
-    lng: 10.7522,
+    lat: 69.6489,
+    lng: 18.9551,
   },
   {
     id: "INS-NO-003",
@@ -904,8 +904,8 @@ export const mockInstruments: Instrument[] = [
       "Targets schools with high proportions of minority-language students and newly arrived refugee children.",
     intendedAudience: "School leaders, teachers, kindergarten staff",
     country: "Norway",
-    lat: 59.9139,
-    lng: 10.7522,
+    lat: 58.1467,
+    lng: 7.9956,
   },
 
   // --- New Zealand & Pacific ---
@@ -937,8 +937,8 @@ export const mockInstruments: Instrument[] = [
       "Treaty-based approach mandates equitable outcomes for Māori students and recognition of Pacific learner identities.",
     intendedAudience: "Schools, teachers, curriculum developers",
     country: "New Zealand",
-    lat: -36.8485,
-    lng: 174.7633,
+    lat: -41.2865,
+    lng: 174.7762,
   },
   {
     id: "INS-NZ-002",
@@ -968,8 +968,8 @@ export const mockInstruments: Instrument[] = [
       "Addresses persistent achievement gaps for Pacific learners through systemic equity interventions.",
     intendedAudience: "Teachers, school leaders, Pacific communities",
     country: "New Zealand",
-    lat: -36.8485,
-    lng: 174.7633,
+    lat: -43.5321,
+    lng: 172.6362,
   },
 
   // --- Italy ---
@@ -997,8 +997,8 @@ export const mockInstruments: Instrument[] = [
       "Addresses integration barriers for newly arrived migrants across socioeconomic and cultural dimensions.",
     intendedAudience: "Government agencies, municipalities, NGOs",
     country: "Italy",
-    lat: 41.9028,
-    lng: 12.4964,
+    lat: 40.8518,
+    lng: 14.2681,
   },
   {
     id: "INS-IT-002",
@@ -1028,8 +1028,8 @@ export const mockInstruments: Instrument[] = [
       "Mandates intercultural mediation services and mother-tongue support for newly arrived pupils.",
     intendedAudience: "School principals, teachers, intercultural mediators",
     country: "Italy",
-    lat: 41.9028,
-    lng: 12.4964,
+    lat: 45.4654,
+    lng: 9.1859,
   },
   {
     id: "INS-IT-003",
@@ -1055,8 +1055,8 @@ export const mockInstruments: Instrument[] = [
       "Focuses on youth from marginalised communities in developing global citizenship and intercultural awareness.",
     intendedAudience: "Schools, youth groups, civil society",
     country: "Italy",
-    lat: 43.7696,
-    lng: 11.2558,
+    lat: 43.1122,
+    lng: 12.3888,
   },
 
   // --- Greece ---
@@ -1084,8 +1084,8 @@ export const mockInstruments: Instrument[] = [
       "Addresses integration barriers for asylum seekers, recognised refugees, and long-term migrants in Greece.",
     intendedAudience: "Government agencies, integration service providers",
     country: "Greece",
-    lat: 37.9838,
-    lng: 23.7275,
+    lat: 35.3387,
+    lng: 25.1442,
   },
   {
     id: "INS-GR-002",
@@ -1115,8 +1115,8 @@ export const mockInstruments: Instrument[] = [
       "Provides free multilingual education to recently arrived migrant and refugee pupils.",
     intendedAudience: "Migrant and refugee pupils, teachers, municipalities",
     country: "Greece",
-    lat: 37.9838,
-    lng: 23.7275,
+    lat: 39.6390,
+    lng: 22.4191,
   },
 
   // --- Germany ---
@@ -1144,8 +1144,8 @@ export const mockInstruments: Instrument[] = [
       "Addresses structural barriers to civic participation and employment for immigrants and people with migration backgrounds.",
     intendedAudience: "Federal agencies, Länder governments, NGOs",
     country: "Germany",
-    lat: 52.52,
-    lng: 13.405,
+    lat: 50.1109,
+    lng: 8.6821,
   },
   {
     id: "INS-DE-002",
@@ -1175,8 +1175,8 @@ export const mockInstruments: Instrument[] = [
       "Specifically targets communities at risk of right-wing extremism and supports anti-racist intercultural projects.",
     intendedAudience: "Civil society, municipalities, youth organisations",
     country: "Germany",
-    lat: 52.52,
-    lng: 13.405,
+    lat: 50.9333,
+    lng: 6.9500,
   },
 
   // --- Serbia ---
@@ -1204,8 +1204,8 @@ export const mockInstruments: Instrument[] = [
       "Exclusively focused on Roma inclusion across education, employment, housing, and healthcare.",
     intendedAudience: "Government agencies, Roma communities, NGOs",
     country: "Serbia",
-    lat: 44.8176,
-    lng: 20.4633,
+    lat: 44.0165,
+    lng: 20.9114,
   },
   {
     id: "INS-RS-002",
@@ -1231,8 +1231,8 @@ export const mockInstruments: Instrument[] = [
       "Guarantees mother-tongue instruction for recognised national minorities including Roma, Hungarians, and Bosniaks.",
     intendedAudience: "Schools, education authorities, national minorities",
     country: "Serbia",
-    lat: 44.8176,
-    lng: 20.4633,
+    lat: 46.1000,
+    lng: 19.6669,
   },
   {
     id: "INS-RS-003",
@@ -1262,8 +1262,8 @@ export const mockInstruments: Instrument[] = [
       "Curriculum explicitly addresses ethnic reconciliation and cross-community contact between Serbian, Albanian, and Roma youth.",
     intendedAudience: "Secondary school students, teachers, municipalities",
     country: "Serbia",
-    lat: 44.8176,
-    lng: 20.4633,
+    lat: 43.8904,
+    lng: 20.3493,
   },
 ];
 
