@@ -23,7 +23,6 @@ export const countryData: CountryDataMap = {
   POL: { hasData: false, name: 'Poland' },
   AUT: { hasData: false, name: 'Austria' },
   CHE: { hasData: false, name: 'Switzerland' },
-  NLD: { hasData: false, name: 'Netherlands' },
   ESP: { hasData: false, name: 'Spain' },
   PRT: { hasData: false, name: 'Portugal' },
   HRV: { hasData: false, name: 'Croatia' },

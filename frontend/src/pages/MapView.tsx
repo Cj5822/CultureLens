@@ -1,42 +1,18 @@
-import { useState, useMemo, useCallback } from 'react'
-import type { FilterState } from '@/types'
+import { useState, useCallback } from 'react'
 import type { Entity } from '@/types/entities'
-import type { EntityFilters } from '@/types/filters'
-import { DEFAULT_FILTERS } from '@/types/filters'
 import { WorldMap } from '@/components/map/WorldMap'
 import { EntityMarkers } from '@/components/map/EntityMarkers'
-import { FilterSidebar } from '@/components/filters/FilterSidebar'
 import { EntityDetailPanel } from '@/components/detail/EntityDetailPanel'
-import { filterEntities } from '@/utils/filterEntities'
-import { mockEntities } from '@/data/mockData'
+import { useFilterContext } from '@/context/FilterContext'
 import { VisualizationProvider, useVisualizationContext } from '@/context/VisualizationContext'
 import { useVisualizationSync } from '@/hooks/useVisualizationSync'
 
-interface MapViewProps {
-  // Legacy top-bar filters kept for interface compatibility with Dashboard
-  filters: FilterState
-}
-
 // ─── Inner component — must be rendered inside VisualizationProvider ──────────
 
-interface MapViewContentProps {
-  entityFilters: EntityFilters
-  onFiltersChange: (f: EntityFilters) => void
-}
-
-function MapViewContent({ entityFilters, onFiltersChange }: MapViewContentProps) {
+function MapViewContent() {
   const [isPanelOpen, setIsPanelOpen] = useState(false)
   const { selectedId, highlightedIds } = useVisualizationContext()
-
-  const filteredEntities = useMemo(
-    () => filterEntities(mockEntities, entityFilters),
-    [entityFilters],
-  )
-
-  const countries = useMemo(
-    () => [...new Set(mockEntities.map((e) => e.country))].sort(),
-    [],
-  )
+  const { filteredEntities } = useFilterContext()
 
   const { selectedEntity, selectEntityById } = useVisualizationSync({
     entities: filteredEntities,
@@ -70,13 +46,6 @@ function MapViewContent({ entityFilters, onFiltersChange }: MapViewContentProps)
 
   return (
     <div className="cl-map-page">
-      <FilterSidebar
-        filters={entityFilters}
-        onChange={onFiltersChange}
-        resultCount={filteredEntities.length}
-        countries={countries}
-      />
-
       <div className="cl-map-page__main">
         <div className="cl-map-wrap">
           <WorldMap height="100%">
@@ -117,17 +86,12 @@ function MapViewContent({ entityFilters, onFiltersChange }: MapViewContentProps)
   )
 }
 
-// ─── MapView — public export, mounts the provider ────────────────────────────
+// ─── MapView — public export ──────────────────────────────────────────────────
 
-export function MapView({ filters: _legacyFilters }: MapViewProps) {
-  const [entityFilters, setEntityFilters] = useState<EntityFilters>(DEFAULT_FILTERS)
-
+export function MapView() {
   return (
     <VisualizationProvider>
-      <MapViewContent
-        entityFilters={entityFilters}
-        onFiltersChange={setEntityFilters}
-      />
+      <MapViewContent />
     </VisualizationProvider>
   )
 }

@@ -1,41 +1,18 @@
-import { useState, useCallback, useMemo } from 'react'
-import type { FilterState } from '@/types'
+import { useState, useCallback } from 'react'
 import type { Entity } from '@/types/entities'
-import type { EntityFilters } from '@/types/filters'
-import { DEFAULT_FILTERS } from '@/types/filters'
 import { GraphInteractionLayer } from '@/components/graph/GraphInteractionLayer'
 import { EntityDetailPanel } from '@/components/detail/EntityDetailPanel'
-import { FilterSidebar } from '@/components/filters/FilterSidebar'
 import { GraphLegend } from '@/components/graph/GraphLegend'
-import { filterEntities } from '@/utils/filterEntities'
-import { mockEntities } from '@/data/mockData'
+import { useFilterContext } from '@/context/FilterContext'
 import { VisualizationProvider, useVisualizationContext } from '@/context/VisualizationContext'
 import { useVisualizationSync } from '@/hooks/useVisualizationSync'
 
-interface NetworkGraphProps {
-  filters: FilterState
-}
-
 // ─── Inner component — must be inside VisualizationProvider ──────────────────
 
-interface NetworkGraphContentProps {
-  entityFilters: EntityFilters
-  onFiltersChange: (f: EntityFilters) => void
-}
-
-function NetworkGraphContent({ entityFilters, onFiltersChange }: NetworkGraphContentProps) {
+function NetworkGraphContent() {
   const [isPanelOpen, setIsPanelOpen] = useState(false)
   const { selectedId } = useVisualizationContext()
-
-  const filteredEntities = useMemo(
-    () => filterEntities(mockEntities, entityFilters),
-    [entityFilters],
-  )
-
-  const countries = useMemo(
-    () => [...new Set(mockEntities.map((e) => e.country))].sort(),
-    [],
-  )
+  const { filteredEntities } = useFilterContext()
 
   const { selectedEntity, selectEntityById } = useVisualizationSync({
     entities: filteredEntities,
@@ -45,7 +22,7 @@ function NetworkGraphContent({ entityFilters, onFiltersChange }: NetworkGraphCon
     setIsPanelOpen(true)
   }, [])
 
-  // Suppress unused selectedId — it's read by GraphInteractionLayer via context
+  // selectedId is consumed by GraphInteractionLayer via context
   void selectedId
 
   const handleClosePanel = useCallback(() => {
@@ -63,13 +40,6 @@ function NetworkGraphContent({ entityFilters, onFiltersChange }: NetworkGraphCon
 
   return (
     <div className="cl-network-page">
-      <FilterSidebar
-        filters={entityFilters}
-        onChange={onFiltersChange}
-        resultCount={filteredEntities.length}
-        countries={countries}
-      />
-
       <div className="cl-network-page__main">
         <div className="cl-network-graph-wrap">
           <GraphInteractionLayer
@@ -93,15 +63,10 @@ function NetworkGraphContent({ entityFilters, onFiltersChange }: NetworkGraphCon
 
 // ─── NetworkGraph — public export ─────────────────────────────────────────────
 
-export function NetworkGraph({ filters: _filters }: NetworkGraphProps) {
-  const [entityFilters, setEntityFilters] = useState<EntityFilters>(DEFAULT_FILTERS)
-
+export function NetworkGraph() {
   return (
     <VisualizationProvider>
-      <NetworkGraphContent
-        entityFilters={entityFilters}
-        onFiltersChange={setEntityFilters}
-      />
+      <NetworkGraphContent />
     </VisualizationProvider>
   )
 }

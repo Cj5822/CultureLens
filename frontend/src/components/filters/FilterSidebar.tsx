@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { X, Search } from 'lucide-react'
+import { X, Search, ChevronLeft } from 'lucide-react'
 import type { EntityFilters } from '@/types/filters'
 import type {
   ActorType,
@@ -29,6 +29,7 @@ export interface FilterSidebarProps {
   onChange: (filters: EntityFilters) => void
   resultCount: number
   countries: readonly string[]
+  onCollapse?: () => void
 }
 
 function countActive(filters: EntityFilters): number {
@@ -46,7 +47,7 @@ function countActive(filters: EntityFilters): number {
   )
 }
 
-export function FilterSidebar({ filters, onChange, resultCount, countries }: FilterSidebarProps) {
+export function FilterSidebar({ filters, onChange, resultCount, countries, onCollapse }: FilterSidebarProps) {
   const activeCount = useMemo(() => countActive(filters), [filters])
 
   function update<K extends keyof EntityFilters>(key: K, value: EntityFilters[K]) {
@@ -58,6 +59,17 @@ export function FilterSidebar({ filters, onChange, resultCount, countries }: Fil
       {/* Header */}
       <div className="cl-filter-sidebar__header">
         <span className="cl-filter-sidebar__title">
+          {onCollapse && (
+            <button
+              type="button"
+              className="cl-filter-collapse"
+              onClick={onCollapse}
+              aria-label="Hide filters"
+              title="Hide filters"
+            >
+              <ChevronLeft size={14} aria-hidden />
+            </button>
+          )}
           Filters
           {activeCount > 0 && (
             <span className="cl-filter-badge" aria-label={`${activeCount} active filters`}>

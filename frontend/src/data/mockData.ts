@@ -67,9 +67,9 @@ export const mockStakeholders: Stakeholder[] = [
     equityAddressed:
       "Promotes inclusion of minority and migrant communities in civic and cultural life through competence-based frameworks.",
     intendedAudience: "Educators, policy makers, youth workers",
-    country: "France",
-    lat: 48.5973,
-    lng: 7.7526,
+    country: "Belgium",
+    lat: 50.8503,
+    lng: 4.3517,
   },
 
   // --- Finland ---
@@ -333,8 +333,8 @@ export const mockStakeholders: Stakeholder[] = [
       "Addresses education access gaps for remote island communities and gender equity in Pacific education.",
     intendedAudience: "Pacific governments, educators, community leaders",
     country: "New Zealand",
-    lat: -21.1394,
-    lng: -175.2046,
+    lat: -41.2866,
+    lng: 174.7756,
   },
 
   // --- Italy ---
@@ -727,9 +727,9 @@ export const mockInstruments: Instrument[] = [
     equityAddressed:
       "Explicitly requires member states to ensure all learners, including disadvantaged groups, develop key competences.",
     intendedAudience: "Education ministries, curriculum developers, schools",
-    country: "Luxembourg",
-    lat: 49.6116,
-    lng: 6.1319,
+    country: "Belgium",
+    lat: 50.8503,
+    lng: 4.3517,
   },
   {
     id: "INS-EU-002",
@@ -758,9 +758,9 @@ export const mockInstruments: Instrument[] = [
     equityAddressed:
       "Inclusion and diversity strand specifically targets organisations working with disadvantaged learners.",
     intendedAudience: "Educational institutions, youth organisations, NGOs",
-    country: "Netherlands",
-    lat: 52.3676,
-    lng: 4.9041,
+    country: "Belgium",
+    lat: 50.8503,
+    lng: 4.3517,
   },
 
   // --- Finland ---

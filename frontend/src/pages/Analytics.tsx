@@ -1,10 +1,4 @@
-import type { FilterState } from '@/types';
-
-interface AnalyticsProps {
-  filters: FilterState;
-}
-
-export function Analytics({ filters: _filters }: AnalyticsProps) {
+export function Analytics() {
   return (
     <div className="cl-page">
       <div className="cl-page-card">
@@ -15,5 +9,5 @@ export function Analytics({ filters: _filters }: AnalyticsProps) {
         </div>
       </div>
     </div>
-  );
+  )
 }
