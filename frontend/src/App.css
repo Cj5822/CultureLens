@@ -613,6 +613,11 @@ html, body, #root {
   opacity: 1;
 }
 
+/* Suppress browser focus ring on Leaflet SVG country polygons */
+.leaflet-interactive:focus {
+  outline: none;
+}
+
 /* Tooltip styling */
 .cl-map-tooltip {
   font-family: 'Geist Variable', sans-serif;
@@ -623,4 +628,401 @@ html, body, #root {
   background: var(--color-background);
   color: var(--color-foreground);
   box-shadow: 0 2px 8px rgb(0 0 0 / 0.08);
+}
+
+/* ── Network graph page layout ─────────────────────────────────────────────── */
+.cl-network-page {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+
+.cl-network-page__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.cl-network-graph-wrap {
+  flex: 1;
+  position: relative;
+  min-height: 0;
+  padding: 16px;
+}
+
+/* ── Map page main area ─────────────────────────────────────────────────────── */
+.cl-map-page__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Entity Detail Panel ───────────────────────────────────────────────────── */
+
+/* Backdrop */
+.cl-detail-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgb(0 0 0 / 0.4);
+  z-index: 1500;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.cl-detail-backdrop--visible {
+  display: block;
+  opacity: 1;
+}
+
+/* Desktop: panel slides in as a non-modal sidebar — no backdrop needed */
+@media (min-width: 641px) {
+  .cl-detail-backdrop,
+  .cl-detail-backdrop--visible {
+    display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cl-detail-backdrop { transition: none; }
+}
+
+/* Panel base */
+.cl-detail-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(420px, 100vw);
+  background: #ffffff;
+  color: #111827;
+  border-left: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  z-index: 1501;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s ease;
+  box-shadow: none;
+}
+
+.cl-detail-panel--open {
+  transform: translateX(0);
+  box-shadow: -4px 0 24px rgb(0 0 0 / 0.15);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cl-detail-panel { transition: none; }
+}
+
+/* Mobile bottom sheet */
+@media (max-width: 640px) {
+  .cl-detail-panel {
+    top: auto;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 80vh;
+    border-left: none;
+    border-top: 1px solid var(--color-border);
+    border-radius: 16px 16px 0 0;
+    transform: translateY(100%);
+  }
+
+  .cl-detail-panel--open {
+    transform: translateY(0);
+    box-shadow: 0 -4px 24px rgb(0 0 0 / 0.15);
+  }
+
+  .cl-detail-backdrop { display: block; }
+}
+
+/* Panel header */
+.cl-detail-panel__header {
+  flex-shrink: 0;
+  padding: 20px 20px 0;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 14px;
+}
+
+.cl-detail-panel__title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.cl-detail-panel__title {
+  flex: 1;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--color-foreground);
+  margin: 0;
+}
+
+.cl-detail-panel__close {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: var(--color-muted-foreground);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.cl-detail-panel__close:hover,
+.cl-detail-panel__close:focus-visible {
+  background: var(--color-accent);
+  color: var(--color-foreground);
+  outline: 2px solid var(--color-ring);
+  outline-offset: 1px;
+}
+
+/* Badges */
+.cl-detail-panel__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.cl-detail-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.cl-detail-badge--stakeholders {
+  background: rgb(79 134 198 / 0.15);
+  color: #4f86c6;
+}
+
+.cl-detail-badge--instruments {
+  background: rgb(214 79 79 / 0.15);
+  color: #d64f4f;
+}
+
+.cl-detail-badge--type {
+  background: var(--color-muted);
+  color: var(--color-muted-foreground);
+}
+
+/* Scrollable body */
+.cl-detail-panel__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px 24px;
+  overscroll-behavior: contain;
+}
+
+/* ── Detail fields ─────────────────────────────────────────────────────────── */
+.cl-detail-fields {
+  margin: 0 0 20px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.cl-detail-field {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-border);
+  align-items: baseline;
+}
+
+.cl-detail-field:last-child {
+  border-bottom: none;
+}
+
+.cl-detail-field__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1.5;
+}
+
+.cl-detail-field__value {
+  font-size: 13px;
+  color: var(--color-foreground);
+  line-height: 1.6;
+  margin: 0;
+  word-break: break-word;
+}
+
+/* External link */
+.cl-detail-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #4f86c6;
+  text-decoration: none;
+  font-size: 13px;
+  word-break: break-all;
+  transition: opacity 0.15s;
+}
+
+.cl-detail-link:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.cl-detail-link:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.cl-detail-link__icon {
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+/* ── Connections section ───────────────────────────────────────────────────── */
+.cl-detail-connections {
+  margin-top: 4px;
+}
+
+.cl-detail-connections__heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 10px;
+}
+
+.cl-detail-connections__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  background: var(--color-muted);
+  color: var(--color-muted-foreground);
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* Connection list */
+.cl-connection-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cl-connection-list__empty {
+  font-size: 13px;
+  color: var(--color-muted-foreground);
+  margin: 0;
+  padding: 12px 0;
+}
+
+/* Connection item button */
+.cl-connection-item {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  background: var(--color-muted);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.cl-connection-item:hover,
+.cl-connection-item:focus-visible {
+  background: var(--color-accent);
+  border-color: var(--color-ring);
+  outline: none;
+}
+
+.cl-connection-item:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cl-connection-item { transition: none; }
+}
+
+.cl-connection-item__name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-foreground);
+  line-height: 1.4;
+}
+
+.cl-connection-item__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.cl-connection-item__category {
+  font-size: 11px;
+  color: var(--color-muted-foreground);
+  text-transform: capitalize;
+}
+
+.cl-connection-item__impact {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 10px;
+  text-transform: capitalize;
+}
+
+.cl-connection-item__impact--symbolic {
+  background: rgb(148 163 184 / 0.2);
+  color: #94a3b8;
+}
+
+.cl-connection-item__impact--advisory {
+  background: rgb(250 204 21 / 0.15);
+  color: #ca8a04;
+}
+
+.cl-connection-item__impact--binding {
+  background: rgb(99 102 241 / 0.15);
+  color: #6366f1;
+}
+
+.cl-connection-item__impact--high {
+  background: rgb(239 68 68 / 0.15);
+  color: #ef4444;
 }
