@@ -6,6 +6,7 @@ import { MapView } from './MapView'
 import { Analytics } from './Analytics'
 import { ClusterAnalysis } from './ClusterAnalysis'
 import { NetworkGraph } from './NetworkGraph'
+import { TextAnalysis } from './TextAnalysis'
 import { FilterContextProvider, useFilterContext } from '@/context/FilterContext'
 import type { ViewType } from '@/types'
 
@@ -14,8 +15,9 @@ import type { ViewType } from '@/types'
 const PAGE_COMPONENTS: Record<ViewType, React.FC> = {
   map:       MapView,
   analytics: Analytics,
-  cluster:   ClusterAnalysis,
-  network:   NetworkGraph,
+  cluster:      ClusterAnalysis,
+  network:      NetworkGraph,
+  textanalysis: TextAnalysis,
 }
 
 // ─── Shared filter sidebar (must be inside FilterContextProvider) ──────────────
