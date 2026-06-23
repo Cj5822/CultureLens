@@ -1,9 +1,11 @@
-import { Map, BarChart2, Layers, Share2, Type } from 'lucide-react';
+import { Map, BarChart2, Layers, Share2, Type, Upload } from 'lucide-react';
 import type { ViewType } from '@/types';
+import { useDataContext } from '@/context/DataContext';
 
 interface SidebarProps {
   activeView: ViewType;
   onNavigate: (view: ViewType) => void;
+  onImportClick: () => void;
 }
 
 const navItems: { id: ViewType; label: string; Icon: React.FC<{ size?: number; strokeWidth?: number }> }[] = [
@@ -14,7 +16,8 @@ const navItems: { id: ViewType; label: string; Icon: React.FC<{ size?: number; s
   { id: 'textanalysis', label: 'Text Analysis',   Icon: Type },
 ];
 
-export function Sidebar({ activeView, onNavigate }: SidebarProps) {
+export function Sidebar({ activeView, onNavigate, onImportClick }: SidebarProps) {
+  const { isImported } = useDataContext();
   return (
     <aside className="cl-sidebar">
       {/* Header */}
@@ -55,6 +58,19 @@ export function Sidebar({ activeView, onNavigate }: SidebarProps) {
           ))}
         </ul>
       </nav>
+
+      {/* Footer — Import button */}
+      <div className="cl-sidebar-footer">
+        <button
+          className={`cl-import-btn ${isImported ? 'cl-import-btn--active' : ''}`}
+          onClick={onImportClick}
+          title="Import Excel data"
+        >
+          <Upload size={18} strokeWidth={1.75} />
+          <span>Import Data</span>
+          {isImported && <span className="cl-import-dot" title="Custom data active" />}
+        </button>
+      </div>
     </aside>
   );
 }

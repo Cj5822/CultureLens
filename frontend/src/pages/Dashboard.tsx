@@ -2,12 +2,14 @@ import { useState } from 'react'
 import { SlidersHorizontal } from 'lucide-react'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { FilterSidebar } from '@/components/filters/FilterSidebar'
+import { ImportModal } from '@/components/import/ImportModal'
 import { MapView } from './MapView'
 import { Analytics } from './Analytics'
 import { ClusterAnalysis } from './ClusterAnalysis'
 import { NetworkGraph } from './NetworkGraph'
 import { TextAnalysis } from './TextAnalysis'
 import { FilterContextProvider, useFilterContext } from '@/context/FilterContext'
+import { DataContextProvider } from '@/context/DataContext'
 import type { ViewType } from '@/types'
 
 // ─── Page registry ─────────────────────────────────────────────────────────────
@@ -47,14 +49,18 @@ function FilterSidebarShell({ open, onCollapse }: FilterSidebarShellProps) {
 export function Dashboard() {
   const [activeView, setActiveView] = useState<ViewType>('map')
   const [filtersOpen, setFiltersOpen] = useState(true)
+  const [importOpen, setImportOpen] = useState(false)
   const PageComponent = PAGE_COMPONENTS[activeView]
 
   return (
+    <DataContextProvider>
     <FilterContextProvider>
+      {importOpen && <ImportModal onClose={() => setImportOpen(false)} />}
       <div className="cl-app">
         <Sidebar
           activeView={activeView}
           onNavigate={setActiveView}
+          onImportClick={() => setImportOpen(true)}
         />
 
         <FilterSidebarShell
@@ -81,5 +87,6 @@ export function Dashboard() {
         </div>
       </div>
     </FilterContextProvider>
+    </DataContextProvider>
   )
 }
