@@ -8,8 +8,8 @@ import {
 import type { Entity } from '@/types/entities'
 import type { EntityFilters } from '@/types/filters'
 import { DEFAULT_FILTERS } from '@/types/filters'
-import { mockEntities } from '@/data/mockData'
 import { filterEntities } from '@/utils/filterEntities'
+import { useDataContext } from '@/context/DataContext'
 
 // ─── Context value ─────────────────────────────────────────────────────────────
 
@@ -29,16 +29,17 @@ const FilterContext = createContext<FilterContextValue | null>(null)
 // ─── Provider ──────────────────────────────────────────────────────────────────
 
 export function FilterContextProvider({ children }: { children: ReactNode }) {
+  const { entities } = useDataContext()
   const [filters, setFilters] = useState<EntityFilters>(DEFAULT_FILTERS)
 
   const filteredEntities = useMemo(
-    () => filterEntities(mockEntities, filters),
-    [filters],
+    () => filterEntities(entities, filters),
+    [entities, filters],
   )
 
   const countries = useMemo(
-    () => [...new Set(mockEntities.map((e) => e.country))].sort(),
-    [],
+    () => [...new Set(entities.map((e) => e.country))].sort(),
+    [entities],
   )
 
   const value = useMemo<FilterContextValue>(

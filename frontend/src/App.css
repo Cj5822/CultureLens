@@ -1955,3 +1955,357 @@ html, body, #root {
   min-width: 48px;
   text-align: right;
 }
+
+/* ── Import button (sidebar footer) ────────────────────── */
+.cl-sidebar-footer {
+  padding: 12px 10px 16px;
+  flex-shrink: 0;
+  border-top: 1px solid oklch(0.30 0.04 243);
+}
+
+.cl-import-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--cl-sidebar-muted);
+  font-size: 13.5px;
+  font-weight: 450;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s, color 0.15s;
+  opacity: 0.85;
+}
+
+.cl-import-btn:hover {
+  background: var(--cl-sidebar-hover-bg);
+  color: var(--cl-sidebar-text);
+  opacity: 1;
+}
+
+.cl-import-btn--active {
+  color: oklch(0.72 0.13 185);
+  opacity: 1;
+}
+
+.cl-import-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: oklch(0.62 0.13 185);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* ── Modal backdrop & shell ─────────────────────────────── */
+.cl-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9000;
+  animation: cl-fade-in 0.15s ease;
+}
+
+@keyframes cl-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.cl-modal {
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  width: 480px;
+  max-width: calc(100vw - 32px);
+  box-shadow: 0 20px 60px oklch(0 0 0 / 0.25);
+  animation: cl-slide-up 0.2s ease;
+  overflow: hidden;
+}
+
+@keyframes cl-slide-up {
+  from { transform: translateY(12px); opacity: 0; }
+  to   { transform: translateY(0);   opacity: 1; }
+}
+
+.cl-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.cl-modal-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-foreground);
+}
+
+.cl-modal-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  color: var(--color-muted-foreground);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.cl-modal-close:hover {
+  background: var(--color-muted);
+  color: var(--color-foreground);
+}
+
+.cl-modal-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cl-modal-footer {
+  padding: 12px 20px;
+  font-size: 11px;
+  color: var(--color-muted-foreground);
+  border-top: 1px solid var(--color-border);
+  background: var(--color-muted);
+  line-height: 1.5;
+}
+
+/* ── Drop zone ──────────────────────────────────────────── */
+.cl-drop-zone {
+  border: 2px dashed var(--color-border);
+  border-radius: 10px;
+  padding: 36px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.cl-drop-zone:hover,
+.cl-drop-zone--active {
+  border-color: oklch(0.62 0.13 185);
+  background: oklch(0.62 0.13 185 / 0.05);
+}
+
+.cl-drop-icon {
+  color: var(--color-muted-foreground);
+  margin-bottom: 4px;
+}
+
+.cl-drop-primary {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--color-foreground);
+  margin: 0;
+}
+
+.cl-drop-secondary {
+  font-size: 12px;
+  color: var(--color-muted-foreground);
+  margin: 0;
+}
+
+/* ── Parsing spinner ────────────────────────────────────── */
+.cl-import-parsing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 36px;
+  color: var(--color-muted-foreground);
+  font-size: 13.5px;
+}
+
+.cl-spin {
+  animation: cl-spin 1s linear infinite;
+}
+
+@keyframes cl-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Status badges ──────────────────────────────────────── */
+.cl-import-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 12.5px;
+}
+
+.cl-import-badge--active {
+  background: oklch(0.62 0.13 185 / 0.1);
+  color: oklch(0.40 0.10 185);
+  border: 1px solid oklch(0.62 0.13 185 / 0.3);
+}
+
+.cl-import-badge--error {
+  background: oklch(0.95 0.03 27);
+  color: oklch(0.45 0.18 27);
+  border: 1px solid oklch(0.80 0.08 27);
+}
+
+.cl-import-badge-reset {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 11.5px;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  white-space: nowrap;
+}
+
+/* ── Preview ────────────────────────────────────────────── */
+.cl-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cl-preview-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cl-preview-check {
+  color: oklch(0.55 0.15 145);
+  flex-shrink: 0;
+}
+
+.cl-preview-filename {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--color-foreground);
+  word-break: break-all;
+}
+
+.cl-preview-sub {
+  font-size: 11.5px;
+  color: var(--color-muted-foreground);
+  margin-top: 2px;
+}
+
+.cl-preview-counts {
+  display: flex;
+  gap: 12px;
+}
+
+.cl-preview-count-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px;
+  background: var(--color-muted);
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  gap: 4px;
+}
+
+.cl-preview-count-num {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-foreground);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.cl-preview-count-label {
+  font-size: 11.5px;
+  color: var(--color-muted-foreground);
+}
+
+.cl-preview-warnings {
+  background: oklch(0.98 0.02 80);
+  border: 1px solid oklch(0.88 0.06 80);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 12px;
+}
+
+.cl-preview-warnings summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: oklch(0.50 0.12 65);
+  font-weight: 500;
+  list-style: none;
+}
+
+.cl-preview-warnings ul {
+  margin: 8px 0 0 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--color-muted-foreground);
+}
+
+.cl-preview-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* ── Buttons ────────────────────────────────────────────── */
+.cl-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  font-size: 13.5px;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.cl-btn--primary {
+  background: oklch(0.22 0.065 243);
+  color: oklch(0.98 0 0);
+}
+
+.cl-btn--primary:hover {
+  background: oklch(0.30 0.075 243);
+}
+
+.cl-btn--ghost {
+  background: var(--color-muted);
+  color: var(--color-foreground);
+  border: 1px solid var(--color-border);
+}
+
+.cl-btn--ghost:hover {
+  background: var(--color-border);
+}
