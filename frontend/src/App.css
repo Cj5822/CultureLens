@@ -1514,6 +1514,34 @@ html, body, #root {
   display: block;
 }
 
+/* Side-by-side comparative word clouds */
+.cl-ta-clouds-row {
+  flex: 1;
+  display: flex;
+  min-height: 360px;
+}
+
+.cl-ta-cloud-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.cl-ta-cloud-col__label {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 4px 8px 8px;
+}
+
+.cl-ta-clouds-divider {
+  width: 1px;
+  align-self: stretch;
+  background: var(--color-border);
+  margin: 4px 0;
+}
+
 /* BOW list */
 .cl-ta-bow-container {
   flex: 1;
@@ -1837,34 +1865,6 @@ html, body, #root {
   max-width: 440px;
   line-height: 1.5;
   margin: 0;
-}
-
-/* ── Legend in tab bar ─────────────────────────────────────────────────────── */
-.cl-ta-legend {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  flex-shrink: 0;
-}
-
-.cl-ta-legend-dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.cl-ta-legend-label {
-  font-size: 11px;
-  color: var(--color-muted-foreground);
-}
-
-.cl-ta-legend-sep {
-  width: 1px;
-  height: 12px;
-  background: var(--color-border);
-  margin: 0 4px;
 }
 
 /* ── Divergent words table ─────────────────────────────────────────────────── */

@@ -1,7 +1,6 @@
 import { useMemo, useEffect, useRef, useState } from 'react'
 import * as d3 from 'd3'
 import { scaleSqrt } from 'd3-scale'
-import { interpolateRgb } from 'd3-interpolate'
 import cloud from 'd3-cloud'
 import { mockEntities } from '@/data/mockData'
 import { filterEntities } from '@/utils/filterEntities'
@@ -26,9 +25,8 @@ const STOP_WORDS = new Set([
   'upon','via','per','etc','eg','ie',
 ])
 
-const COLOR_A      = '#2563eb'
-const COLOR_SHARED = '#94a3b8'
-const COLOR_B      = '#ea580c'
+const COLOR_A = '#2563eb'
+const COLOR_B = '#ea580c'
 
 const ALL_COUNTRIES = [...new Set(mockEntities.map(e => e.country))].sort()
 
@@ -63,54 +61,51 @@ function buildFrequency(country: string): Map<string, number> {
   return freq
 }
 
-function diffColor(score: number): string {
-  if (score > 0) return interpolateRgb(COLOR_SHARED, COLOR_A)(Math.min(score * 6, 1))
-  return interpolateRgb(COLOR_SHARED, COLOR_B)(Math.min(-score * 6, 1))
-}
-
-interface DiffWord {
+interface FreqWord {
   text: string
-  countA: number
-  countB: number
-  differential: number
-  combined: number
+  count: number
   size?: number
   x?: number
   y?: number
   rotate?: number
 }
 
-function buildDiffWords(countryA: string, countryB: string): DiffWord[] {
-  const freqA = buildFrequency(countryA)
-  const freqB = buildFrequency(countryB)
-  const totalA = [...freqA.values()].reduce((s, n) => s + n, 0)
-  const totalB = [...freqB.values()].reduce((s, n) => s + n, 0)
-  const allWords = new Set([...freqA.keys(), ...freqB.keys()])
-  const words: DiffWord[] = []
-  for (const word of allWords) {
-    const cA = freqA.get(word) ?? 0
-    const cB = freqB.get(word) ?? 0
-    const combined = cA + cB
-    if (combined < 2) continue
-    const normA = cA / Math.max(totalA, 1)
-    const normB = cB / Math.max(totalB, 1)
-    words.push({ text: word, countA: cA, countB: cB, differential: normA - normB, combined })
-  }
-  return words.sort((a, b) => b.combined - a.combined).slice(0, 100)
+const MAX_WORDS_PER_CLOUD = 60
+
+function buildFreqWords(country: string): FreqWord[] {
+  const freq = buildFrequency(country)
+  return [...freq.entries()]
+    .map(([text, count]) => ({ text, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, MAX_WORDS_PER_CLOUD)
 }
 
-function WordCloud({ words, width, height }: { words: DiffWord[]; width: number; height: number }) {
+// A single word cloud for one country. `maxCount` is shared across both
+// clouds so word sizes stay on the same scale and remain comparable
+// side by side.
+function WordCloud({
+  words,
+  width,
+  height,
+  color,
+  maxCount,
+}: {
+  words: FreqWord[]
+  width: number
+  height: number
+  color: string
+  maxCount: number
+}) {
   const svgRef = useRef<SVGSVGElement>(null)
 
   useEffect(() => {
-    if (!svgRef.current || words.length === 0) return
-    const maxCombined = Math.max(...words.map(w => w.combined))
-    const sizeScale = scaleSqrt().domain([0, maxCombined]).range([10, Math.min(width, height) * 0.11]).clamp(true)
+    if (!svgRef.current || words.length === 0 || width <= 0 || height <= 0) return
+    const sizeScale = scaleSqrt().domain([0, maxCount]).range([10, Math.min(width, height) * 0.16]).clamp(true)
 
     const layout = cloud()
       .size([width, height])
-      .words(words.map(w => ({ ...w, size: sizeScale(w.combined) })))
-      .padding(4)
+      .words(words.map(w => ({ ...w, size: sizeScale(w.count) })))
+      .padding(3)
       .rotate(() => (Math.random() > 0.75 ? (Math.random() > 0.5 ? 90 : -90) : 0))
       .font('sans-serif')
       .fontSize((d: { size?: number }) => d.size ?? 12)
@@ -120,23 +115,22 @@ function WordCloud({ words, width, height }: { words: DiffWord[]; width: number;
         const svg = d3.select(svgRef.current)
         svg.selectAll('*').remove()
         const g = svg.append('g').attr('transform', `translate(${width / 2},${height / 2})`)
-        const maxDiff = Math.max(...(placed as DiffWord[]).map(w => Math.abs(w.differential))) || 1
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const nodes = (g as any).selectAll('text').data(placed as DiffWord[]).enter().append('text')
+        const nodes = (g as any).selectAll('text').data(placed as FreqWord[]).enter().append('text')
         nodes.style('font-family', 'sans-serif')
-        nodes.style('font-weight', (d: DiffWord) => (d.combined > maxCombined * 0.3 ? '700' : '500'))
-        nodes.style('fill', (d: DiffWord) => diffColor(d.differential / maxDiff))
+        nodes.style('font-weight', (d: FreqWord) => (d.count > maxCount * 0.3 ? '700' : '500'))
+        nodes.style('fill', color)
         nodes.style('cursor', 'default')
         nodes.attr('text-anchor', 'middle')
-        nodes.attr('font-size', (d: DiffWord) => String(d.size ?? 12) + 'px')
-        nodes.attr('transform', (d: DiffWord) => 'translate(' + String(d.x) + ',' + String(d.y) + ') rotate(' + String(d.rotate) + ')')
-        nodes.text((d: DiffWord) => d.text ?? '')
-        nodes.append('title').text((d: DiffWord) => '"' + d.text + '" A:' + String(d.countA) + ' B:' + String(d.countB))
+        nodes.attr('font-size', (d: FreqWord) => String(d.size ?? 12) + 'px')
+        nodes.attr('transform', (d: FreqWord) => 'translate(' + String(d.x) + ',' + String(d.y) + ') rotate(' + String(d.rotate) + ')')
+        nodes.text((d: FreqWord) => d.text ?? '')
+        nodes.append('title').text((d: FreqWord) => '"' + d.text + '" — ' + String(d.count) + ' occurrence' + (d.count === 1 ? '' : 's'))
       })
 
     layout.start()
     return () => { layout.stop() }
-  }, [words, width, height])
+  }, [words, width, height, color, maxCount])
 
   return <svg ref={svgRef} width={width} height={height} />
 }
@@ -145,24 +139,37 @@ export function TextAnalysis() {
   const [countryA, setCountryA] = useState<string>('')
   const [countryB, setCountryB] = useState<string>('')
 
-  const cloudRef = useRef<HTMLDivElement>(null)
-  const [size, setSize] = useState({ width: 700, height: 420 })
+  const cloudRowRef = useRef<HTMLDivElement>(null)
+  const [rowSize, setRowSize] = useState({ width: 700, height: 420 })
 
   useEffect(() => {
-    if (!cloudRef.current) return
+    if (!cloudRowRef.current) return
     const ro = new ResizeObserver(entries => {
       const e = entries[0]
-      if (e) setSize({ width: Math.floor(e.contentRect.width), height: Math.floor(e.contentRect.height) })
+      if (e) setRowSize({ width: Math.floor(e.contentRect.width), height: Math.floor(e.contentRect.height) })
     })
-    ro.observe(cloudRef.current)
+    ro.observe(cloudRowRef.current)
     return () => ro.disconnect()
   }, [])
 
+  // Each cloud gets half the row width, minus the divider between them.
+  const paneWidth = Math.max(0, Math.floor((rowSize.width - 1) / 2))
+  const paneHeight = rowSize.height
+
   const ready = Boolean(countryA && countryB && countryA !== countryB)
 
-  const words = useMemo(
-    () => (ready ? buildDiffWords(countryA, countryB) : []),
-    [ready, countryA, countryB],
+  const wordsA = useMemo(
+    () => (ready ? buildFreqWords(countryA) : []),
+    [ready, countryA],
+  )
+  const wordsB = useMemo(
+    () => (ready ? buildFreqWords(countryB) : []),
+    [ready, countryB],
+  )
+  // Shared scale domain so a word's size means the same thing in both clouds.
+  const maxCount = useMemo(
+    () => Math.max(1, ...wordsA.map(w => w.count), ...wordsB.map(w => w.count)),
+    [wordsA, wordsB],
   )
 
   const entityCountA = useMemo(
@@ -211,33 +218,37 @@ export function TextAnalysis() {
       {!ready && (
         <div className="cl-ta-empty-prompt">
           <span className="cl-ta-empty-prompt__icon">☁</span>
-          <p className="cl-ta-empty-prompt__title">Select two countries to generate a word cloud</p>
+          <p className="cl-ta-empty-prompt__title">Select two countries to compare word clouds</p>
           <p className="cl-ta-empty-prompt__sub">
-            Words in <strong style={{ color: COLOR_A }}>blue</strong> appear more in Country A,{' '}
-            <strong style={{ color: COLOR_B }}>orange</strong> in Country B, and{' '}
-            <strong style={{ color: COLOR_SHARED }}>grey</strong> are shared.
+            Each country gets its own word cloud, sized on the same scale, so you can compare
+            the most frequent words in <strong style={{ color: COLOR_A }}>Country A</strong>{' '}
+            side by side with <strong style={{ color: COLOR_B }}>Country B</strong>.
           </p>
         </div>
       )}
 
       {ready && (
         <div className="cl-chart-card cl-ta-main-card">
-          <div className="cl-ta-cloud-header">
-            <span className="cl-ta-cloud-title">Word Cloud</span>
-            <div className="cl-ta-legend">
-              <span className="cl-ta-legend-dot" style={{ background: COLOR_A }} />
-              <span className="cl-ta-legend-label">{countryA}</span>
-              <span className="cl-ta-legend-dot" style={{ background: COLOR_SHARED }} />
-              <span className="cl-ta-legend-label">Shared</span>
-              <span className="cl-ta-legend-dot" style={{ background: COLOR_B }} />
-              <span className="cl-ta-legend-label">{countryB}</span>
+          <div ref={cloudRowRef} className="cl-ta-clouds-row">
+            <div className="cl-ta-cloud-col">
+              <div className="cl-ta-cloud-col__label" style={{ color: COLOR_A }}>{countryA}</div>
+              <div className="cl-ta-cloud-container">
+                {wordsA.length === 0
+                  ? <div className="cl-chart-empty">Not enough text data for {countryA}.</div>
+                  : <WordCloud words={wordsA} width={paneWidth} height={paneHeight} color={COLOR_A} maxCount={maxCount} />
+                }
+              </div>
             </div>
-          </div>
-          <div ref={cloudRef} className="cl-ta-cloud-container">
-            {words.length === 0
-              ? <div className="cl-chart-empty">Not enough text data for these countries.</div>
-              : <WordCloud words={words} width={size.width} height={size.height} />
-            }
+            <div className="cl-ta-clouds-divider" />
+            <div className="cl-ta-cloud-col">
+              <div className="cl-ta-cloud-col__label" style={{ color: COLOR_B }}>{countryB}</div>
+              <div className="cl-ta-cloud-container">
+                {wordsB.length === 0
+                  ? <div className="cl-chart-empty">Not enough text data for {countryB}.</div>
+                  : <WordCloud words={wordsB} width={paneWidth} height={paneHeight} color={COLOR_B} maxCount={maxCount} />
+                }
+              </div>
+            </div>
           </div>
         </div>
       )}
