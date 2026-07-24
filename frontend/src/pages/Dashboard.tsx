@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { SlidersHorizontal } from 'lucide-react'
+import { SlidersHorizontal, FileSpreadsheet } from 'lucide-react'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { FilterSidebar } from '@/components/filters/FilterSidebar'
 import { ImportModal } from '@/components/import/ImportModal'
@@ -9,20 +9,16 @@ import { ClusterAnalysis } from './ClusterAnalysis'
 import { NetworkGraph } from './NetworkGraph'
 import { TextAnalysis } from './TextAnalysis'
 import { FilterContextProvider, useFilterContext } from '@/context/FilterContext'
-import { DataContextProvider } from '@/context/DataContext'
+import { DataContextProvider, useDataContext } from '@/context/DataContext'
 import type { ViewType } from '@/types'
 
-// ─── Page registry ─────────────────────────────────────────────────────────────
-
 const PAGE_COMPONENTS: Record<ViewType, React.FC> = {
-  map:       MapView,
-  analytics: Analytics,
+  map:          MapView,
+  analytics:    Analytics,
   cluster:      ClusterAnalysis,
   network:      NetworkGraph,
   textanalysis: TextAnalysis,
 }
-
-// ─── Shared filter sidebar (must be inside FilterContextProvider) ──────────────
 
 interface FilterSidebarShellProps {
   open: boolean
@@ -44,16 +40,30 @@ function FilterSidebarShell({ open, onCollapse }: FilterSidebarShellProps) {
   )
 }
 
-// ─── Dashboard ─────────────────────────────────────────────────────────────────
+function EmptyStatePrompt({ onImportClick }: { onImportClick: () => void }) {
+  return (
+    <div className="cl-empty-state">
+      <FileSpreadsheet size={48} className="cl-empty-state__icon" />
+      <h2 className="cl-empty-state__title">No data loaded</h2>
+      <p className="cl-empty-state__desc">
+        Import a Policy Mapping Template Excel file to start exploring stakeholders and instruments.
+      </p>
+      <button className="cl-btn cl-btn--primary" onClick={onImportClick}>
+        Import Excel file
+      </button>
+    </div>
+  )
+}
 
-export function Dashboard() {
+function DashboardShell() {
+  const { entities } = useDataContext()
   const [activeView, setActiveView] = useState<ViewType>('map')
   const [filtersOpen, setFiltersOpen] = useState(true)
   const [importOpen, setImportOpen] = useState(false)
   const PageComponent = PAGE_COMPONENTS[activeView]
+  const hasData = entities.length > 0
 
   return (
-    <DataContextProvider>
     <FilterContextProvider>
       {importOpen && <ImportModal onClose={() => setImportOpen(false)} />}
       <div className="cl-app">
@@ -63,14 +73,15 @@ export function Dashboard() {
           onImportClick={() => setImportOpen(true)}
         />
 
-        <FilterSidebarShell
-          open={filtersOpen}
-          onCollapse={() => setFiltersOpen(false)}
-        />
+        {hasData && (
+          <FilterSidebarShell
+            open={filtersOpen}
+            onCollapse={() => setFiltersOpen(false)}
+          />
+        )}
 
-        <div className={`cl-main${filtersOpen ? '' : ' cl-main--filters-hidden'}`}>
-          {/* Expand button — floats over the content when sidebar is hidden */}
-          {!filtersOpen && (
+        <div className={`cl-main${!hasData || filtersOpen ? '' : ' cl-main--filters-hidden'}`}>
+          {hasData && !filtersOpen && (
             <button
               type="button"
               className="cl-filter-expand-btn"
@@ -82,11 +93,21 @@ export function Dashboard() {
             </button>
           )}
           <main className="cl-content">
-            <PageComponent />
+            {hasData
+              ? <PageComponent />
+              : <EmptyStatePrompt onImportClick={() => setImportOpen(true)} />
+            }
           </main>
         </div>
       </div>
     </FilterContextProvider>
+  )
+}
+
+export function Dashboard() {
+  return (
+    <DataContextProvider>
+      <DashboardShell />
     </DataContextProvider>
   )
 }

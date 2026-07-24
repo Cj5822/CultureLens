@@ -7,7 +7,7 @@
 
 import { useRef, useState, useCallback } from 'react'
 import { createPortal } from 'react-dom'
-import { Upload, FileSpreadsheet, X, AlertTriangle, CheckCircle2, Loader2, RotateCcw } from 'lucide-react'
+import { Upload, FileSpreadsheet, X, AlertTriangle, CheckCircle2, Loader2 } from 'lucide-react'
 import { parseExcelFile, mergeEntities, type ParseResult } from '@/utils/excelParser'
 import { useDataContext } from '@/context/DataContext'
 
@@ -28,7 +28,7 @@ type Step =
 // ─── Component ─────────────────────────────────────────────────────────────────
 
 export function ImportModal({ onClose }: ImportModalProps) {
-  const { setEntities, isImported, resetToMock } = useDataContext()
+  const { setEntities, isImported } = useDataContext()
   const [step, setStep] = useState<Step>({ type: 'idle' })
   const [dragging, setDragging] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
@@ -123,13 +123,7 @@ export function ImportModal({ onClose }: ImportModalProps) {
           {isImported && step.type === 'idle' && (
             <div className="cl-import-badge cl-import-badge--active">
               <CheckCircle2 size={14} />
-              <span>Custom data is active.</span>
-              <button
-                className="cl-import-badge-reset"
-                onClick={() => { resetToMock(); onClose() }}
-              >
-                <RotateCcw size={12} /> Revert to demo data
-              </button>
+              <span>Data is loaded. Import a new file to replace it.</span>
             </div>
           )}
 
@@ -225,7 +219,7 @@ export function ImportModal({ onClose }: ImportModalProps) {
         {/* Format hint */}
         {step.type !== 'preview' && step.type !== 'parsing' && (
           <div className="cl-modal-footer">
-            Expected format: 2-sheet workbook with sheets named <em>Stakeholders</em> and <em>Instruments</em>, each with a header row matching the INTRACOMP mapping template.
+            Expected format: INTRACOMP Policy Mapping Template (.xlsx) with <em>Stakeholders</em> and <em>Instruments</em> sheets. Metadata rows at the top (Partner, Date, Country) are read automatically.
           </div>
         )}
       </div>

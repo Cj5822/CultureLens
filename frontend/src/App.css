@@ -248,6 +248,42 @@ html, body, #root {
   flex: 1;
   overflow-y: auto;
   background: var(--cl-content-bg);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Empty state ───────────────────────────────────────── */
+.cl-empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.cl-empty-state__icon {
+  color: var(--color-muted-foreground);
+  opacity: 0.5;
+  margin-bottom: 4px;
+}
+
+.cl-empty-state__title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--color-foreground);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.cl-empty-state__desc {
+  font-size: 13.5px;
+  color: var(--color-muted-foreground);
+  max-width: 360px;
+  line-height: 1.55;
+  margin: 0 0 8px;
 }
 
 .cl-page {
@@ -2308,4 +2344,252 @@ html, body, #root {
 
 .cl-btn--ghost:hover {
   background: var(--color-border);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   Country Entity List panel
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* Panel — slides in from the right at z-index below EntityDetailPanel */
+.cl-cel-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(360px, 100vw);
+  background: #ffffff;
+  color: #111827;
+  border-left: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  z-index: 1300;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s ease;
+  box-shadow: none;
+}
+
+.cl-cel-panel--open {
+  transform: translateX(0);
+  box-shadow: -4px 0 24px rgb(0 0 0 / 0.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cl-cel-panel { transition: none; }
+}
+
+/* When EntityDetailPanel is also open, nudge the list panel to the left */
+.cl-cel-panel--open ~ .cl-detail-panel--open,
+body:has(.cl-cel-panel--open) .cl-detail-panel--open {
+  /* Detail panel sits on top — no nudge needed at desktop widths */
+}
+
+/* Header */
+.cl-cel-panel__header {
+  flex-shrink: 0;
+  padding: 20px 20px 14px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.cl-cel-panel__title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cl-cel-panel__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 2px;
+}
+
+.cl-cel-panel__subtitle {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* Scrollable body */
+.cl-cel-panel__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.cl-cel-panel__empty {
+  font-size: 13px;
+  color: #9ca3af;
+  text-align: center;
+  margin-top: 32px;
+  padding: 0 20px;
+}
+
+/* Entity list */
+.cl-cel-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Row button */
+.cl-cel-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease;
+  color: #111827;
+}
+
+.cl-cel-row:hover,
+.cl-cel-row:focus-visible {
+  background: #f3f4f6;
+  outline: none;
+}
+
+.cl-cel-row:focus-visible {
+  outline: 2px solid var(--cl-accent, #2563eb);
+  outline-offset: -2px;
+}
+
+/* Category dot */
+.cl-cel__dot {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+}
+
+.cl-cel__dot--circle {
+  border-radius: 50%;
+}
+
+.cl-cel__dot--diamond {
+  border-radius: 2px;
+  transform: rotate(45deg);
+}
+
+/* Row content */
+.cl-cel-row__content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.cl-cel-row__name {
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #111827;
+  line-height: 1.3;
+}
+
+.cl-cel-row__meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.cl-cel-row__type-chip {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 999px;
+  text-transform: capitalize;
+  letter-spacing: 0.02em;
+}
+
+.cl-cel-row__impact {
+  font-size: 10px;
+  color: #9ca3af;
+}
+
+.cl-cel-row__arrow {
+  flex-shrink: 0;
+  font-size: 16px;
+  color: #d1d5db;
+  line-height: 1;
+}
+
+/* Mobile: full-width bottom sheet */
+@media (max-width: 640px) {
+  .cl-cel-panel {
+    top: auto;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 75vh;
+    border-left: none;
+    border-top: 1px solid #e5e7eb;
+    border-radius: 16px 16px 0 0;
+    transform: translateY(100%);
+  }
+
+  .cl-cel-panel--open {
+    transform: translateY(0);
+  }
+}
+
+/* ── Map legend inside CountryEntityList panel ──────────────────────────────── */
+
+.cl-cel-legend {
+  flex-shrink: 0;
+  border-top: 1px solid #e5e7eb;
+  padding: 12px 16px 14px;
+}
+
+.cl-cel-legend__heading {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9ca3af;
+  margin: 0 0 8px;
+}
+
+.cl-cel-legend__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 12px;
+}
+
+.cl-cel-legend__row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cl-cel-legend__swatch {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+  border-radius: 2px;
+}
+
+.cl-cel-legend__swatch--partner    { background: #5b8db8; opacity: 0.85; }
+.cl-cel-legend__swatch--other      { background: #c8cdd4; }
+.cl-cel-legend__swatch--stakeholder { background: #4f86c6; border-radius: 50%; }
+.cl-cel-legend__swatch--instrument {
+  background: #d64f4f;
+  border-radius: 2px;
+  transform: rotate(45deg);
+}
+
+.cl-cel-legend__label {
+  font-size: 11px;
+  color: #6b7280;
 }

@@ -1,14 +1,37 @@
 import 'leaflet/dist/leaflet.css'
-import { useCallback, useRef } from 'react'
+import { useCallback, useRef, useMemo } from 'react'
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet'
 import * as L from 'leaflet'
 import type { Feature, FeatureCollection } from 'geojson'
 import { feature } from 'topojson-client'
 import type { Topology } from 'topojson-specification'
 import worldDataJson from 'world-atlas/countries-110m.json'
-import { countryData } from '@/data/countryMockData'
 import { getCountryStyle, getHoverStyle } from '@/utils/mapStyle'
-import type { WorldMapProps } from './types'
+import { useDataContext } from '@/context/DataContext'
+import type { CountryDataMap, WorldMapProps } from './types'
+
+// Country name to ISO3 lookup for dynamic data highlighting
+const NAME_TO_ISO3: Record<string, string> = {
+  'finland':        'FIN',
+  'norway':         'NOR',
+  'greece':         'GRC',
+  'italy':          'ITA',
+  'germany':        'DEU',
+  'serbia':         'SRB',
+  'belgium':        'BEL',
+  'france':         'FRA',
+  'austria':        'AUT',
+  'netherlands':    'NLD',
+  'spain':          'ESP',
+  'sweden':         'SWE',
+  'poland':         'POL',
+  'portugal':       'PRT',
+  'uk':             'GBR',
+  'united kingdom': 'GBR',
+  'switzerland':    'CHE',
+  'eu':             'BEL',
+  'new zealand':    'NZL',
+}
 
 // world-atlas encodes country IDs as numeric ISO 3166-1 strings (e.g. "246" = Finland)
 const NUMERIC_TO_ISO3: Record<string, string> = {
@@ -39,20 +62,12 @@ const NUMERIC_TO_ISO3: Record<string, string> = {
   '807': 'MKD', '499': 'MNE',
 }
 
-// Features whose polygons cross the ±180° meridian cause Leaflet's SVG renderer to draw
-// a connecting arc straight across the full viewport.
-// Russia and USA are fixed via coordinate normalisation (see fixAntimeridian below) so
-// hover/click events still work on them. The remaining entries have more complex geometry
-// and are filtered out entirely — they remain visible through the OSM tile layer.
 const ANTIMERIDIAN_FILTER_IDS = new Set([
-  242, // Fiji (Viti) — islands span both sides of ±180°
-  296, // Kiribati — spreads across the antimeridian
-  10,  // Antarctica — circumglobal polygon
+  242, // Fiji
+  296, // Kiribati
+  10,  // Antarctica
 ])
 
-// Normalise a single ring so consecutive vertices never jump > 180° in longitude.
-// This makes the polygon continuous and prevents Leaflet's SVG renderer from drawing
-// a horizontal line across the full viewport.
 function normalizeRing(ring: number[][]): number[][] {
   if (!ring.length) return ring
   const result: number[][] = [[...ring[0]]]
@@ -84,10 +99,9 @@ function fixAntimeridian(f: Feature): Feature {
   return f
 }
 
-// Countries whose antimeridian crossing is fixed via normalisation rather than filtering
 const ANTIMERIDIAN_FIX_IDS = new Set([
   643, // Russia
-  840, // United States (Aleutian Islands)
+  840, // United States
 ])
 
 const worldData = worldDataJson as unknown as Topology
@@ -99,9 +113,7 @@ const rawGeoData = feature(
 const geoData: FeatureCollection = {
   type: 'FeatureCollection',
   features: rawGeoData.features
-    // Drop features that can't be fixed (Fiji, Kiribati, Antarctica)
     .filter(f => !ANTIMERIDIAN_FILTER_IDS.has(Number(f.id)))
-    // Normalise antimeridian-crossing polygons for Russia and USA
     .map(f => ANTIMERIDIAN_FIX_IDS.has(Number(f.id)) ? fixAntimeridian(f) : f),
 }
 
@@ -112,26 +124,40 @@ export function WorldMap({
   onCountryClick,
   children,
 }: WorldMapProps) {
-  // Tracks the last hovered layer so we can force-reset it if mouseout was swallowed
-  // by bringToFront()'s DOM re-insertion (a known Leaflet quirk).
+  const { entities } = useDataContext()
+
+  // Build dynamic CountryDataMap from loaded entities
+  const dynamicCountryData = useMemo<CountryDataMap>(() => {
+    const map: CountryDataMap = {}
+    for (const entity of entities) {
+      if (!entity.country) continue
+      const iso3 = NAME_TO_ISO3[entity.country.toLowerCase().trim()]
+      if (!iso3) continue
+      if (!map[iso3]) {
+        map[iso3] = { hasData: true, name: entity.country, entryCount: 0 }
+      }
+      map[iso3].entryCount = (map[iso3].entryCount ?? 0) + 1
+    }
+    return map
+  }, [entities])
+
   const lastHovered = useRef<{ layer: L.Path; base: L.PathOptions } | null>(null)
 
   const styleFeature = useCallback(
     (f: Feature | undefined): L.PathOptions => {
       const numStr = f?.id != null ? String(f.id).padStart(3, '0') : undefined
       const iso3 = numStr ? NUMERIC_TO_ISO3[numStr] : undefined
-      return getCountryStyle(iso3, countryData)
+      return getCountryStyle(iso3, dynamicCountryData)
     },
-    [],
+    [dynamicCountryData],
   )
 
   const onEachFeature = useCallback(
     (f: Feature, layer: L.Layer) => {
       const numStr = f.id != null ? String(f.id).padStart(3, '0') : undefined
       const iso3 = numStr ? NUMERIC_TO_ISO3[numStr] : undefined
-      const entry = iso3 ? countryData[iso3] : undefined
-      // Compute base style once per feature so mouseout can reset without a ref
-      const base = getCountryStyle(iso3, countryData)
+      const entry = iso3 ? dynamicCountryData[iso3] : undefined
+      const base = getCountryStyle(iso3, dynamicCountryData)
 
       if (entry) {
         const count = entry.entryCount ?? 0
@@ -149,8 +175,6 @@ export function WorldMap({
       layer.on({
         mouseover: (e: L.LeafletMouseEvent) => {
           const target = e.target as L.Path
-          // If a previous layer's mouseout was swallowed (bringToFront re-inserts the
-          // SVG node, which can confuse the browser's hit-testing), reset it now.
           if (lastHovered.current && lastHovered.current.layer !== target) {
             lastHovered.current.layer.setStyle(lastHovered.current.base)
           }
@@ -172,7 +196,7 @@ export function WorldMap({
         },
       })
     },
-    [onCountryClick],
+    [dynamicCountryData, onCountryClick],
   )
 
   return (
@@ -188,7 +212,7 @@ export function WorldMap({
     >
       <TileLayer
         url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-        attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>'
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
         subdomains="abcd"
         maxZoom={19}
       />
@@ -196,7 +220,7 @@ export function WorldMap({
         data={geoData}
         style={styleFeature}
         onEachFeature={onEachFeature}
-        key="world-atlas-110m"
+        key={`world-atlas-${entities.length}`}
       />
       {children}
     </MapContainer>

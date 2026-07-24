@@ -2,10 +2,10 @@
  * DataContext.tsx
  *
  * Holds the "active" entity dataset for the whole app.
- * Starts with mockEntities; the import flow replaces it via setEntities.
+ * Starts empty; populated when the user imports an Excel file.
  *
- * FilterContext reads from here instead of importing mockEntities directly,
- * so swapping in real data causes every view to re-render automatically.
+ * FilterContext reads from here so swapping in data causes every view to
+ * re-render automatically.
  */
 
 import {
@@ -15,18 +15,17 @@ import {
   type ReactNode,
 } from 'react';
 import type { Entity } from '@/types/entities';
-import { mockEntities } from '@/data/mockData';
 
 // ─── Context value ─────────────────────────────────────────────────────────────
 
 export interface DataContextValue {
-  /** The currently active entity dataset. */
+  /** The currently active entity dataset (empty until an Excel file is imported). */
   entities: Entity[];
-  /** Replace the active dataset (e.g. after a successful Excel import). */
+  /** Replace the active dataset after a successful Excel import. */
   setEntities: (entities: Entity[]) => void;
-  /** True when real data has been imported (false = still using demo data). */
+  /** True when data has been imported. */
   isImported: boolean;
-  /** Revert to the built-in demo dataset. */
+  /** Clear all data (return to empty state). */
   resetToMock: () => void;
 }
 
@@ -37,7 +36,7 @@ const DataContext = createContext<DataContextValue | null>(null);
 // ─── Provider ──────────────────────────────────────────────────────────────────
 
 export function DataContextProvider({ children }: { children: ReactNode }) {
-  const [entities, setEntitiesState] = useState<Entity[]>(mockEntities);
+  const [entities, setEntitiesState] = useState<Entity[]>([]);
   const [isImported, setIsImported] = useState(false);
 
   function setEntities(next: Entity[]) {
@@ -46,7 +45,7 @@ export function DataContextProvider({ children }: { children: ReactNode }) {
   }
 
   function resetToMock() {
-    setEntitiesState(mockEntities);
+    setEntitiesState([]);
     setIsImported(false);
   }
 

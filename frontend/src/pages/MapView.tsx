@@ -1,37 +1,62 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import type { Entity } from '@/types/entities'
 import { WorldMap } from '@/components/map/WorldMap'
-import { EntityMarkers } from '@/components/map/EntityMarkers'
 import { EntityDetailPanel } from '@/components/detail/EntityDetailPanel'
+import { CountryEntityList } from '@/components/map/CountryEntityList'
 import { useFilterContext } from '@/context/FilterContext'
-import { VisualizationProvider, useVisualizationContext } from '@/context/VisualizationContext'
+import { VisualizationProvider } from '@/context/VisualizationContext'
 import { useVisualizationSync } from '@/hooks/useVisualizationSync'
 
-// ─── Inner component — must be rendered inside VisualizationProvider ──────────
+// ─── Inner component ──────────────────────────────────────────────────────────
 
 function MapViewContent() {
-  const [isPanelOpen, setIsPanelOpen] = useState(false)
-  const { selectedId, highlightedIds } = useVisualizationContext()
+  const [isPanelOpen, setIsPanelOpen]       = useState(false)
+  const [selectedCountry, setSelectedCountry] = useState<{ name: string } | null>(null)
+  const [isCountryListOpen, setIsCountryListOpen] = useState(false)
+
   const { filteredEntities } = useFilterContext()
+  const { selectedEntity, selectEntityById } = useVisualizationSync({ entities: filteredEntities })
 
-  const { selectedEntity, selectEntityById } = useVisualizationSync({
-    entities: filteredEntities,
-  })
+  const countryEntities = useMemo(() => {
+    if (!selectedCountry) return []
+    return filteredEntities.filter(
+      e => e.country.toLowerCase().trim() === selectedCountry.name.toLowerCase().trim()
+    )
+  }, [filteredEntities, selectedCountry])
 
-  const handleMarkerClick = useCallback(
-    (entity: Entity) => {
-      if (selectedId === entity.id) {
+  const handleCountryClick = useCallback(
+    (_iso3: string, name: string) => {
+      if (selectedCountry?.name.toLowerCase() === name.toLowerCase()) {
+        setSelectedCountry(null)
+        setIsCountryListOpen(false)
         selectEntityById(null)
         setIsPanelOpen(false)
-      } else {
-        selectEntityById(entity.id)
-        setIsPanelOpen(true)
+        return
       }
+      setSelectedCountry({ name })
+      setIsCountryListOpen(true)
+      selectEntityById(null)
+      setIsPanelOpen(false)
     },
-    [selectedId, selectEntityById],
+    [selectedCountry, selectEntityById],
+  )
+
+  const handleListEntitySelect = useCallback(
+    (entity: Entity) => {
+      selectEntityById(entity.id)
+      setIsPanelOpen(true)
+    },
+    [selectEntityById],
   )
 
   const handleClosePanel = useCallback(() => {
+    selectEntityById(null)
+    setIsPanelOpen(false)
+  }, [selectEntityById])
+
+  const handleCloseCountryList = useCallback(() => {
+    setSelectedCountry(null)
+    setIsCountryListOpen(false)
     selectEntityById(null)
     setIsPanelOpen(false)
   }, [selectEntityById])
@@ -48,31 +73,18 @@ function MapViewContent() {
     <div className="cl-map-page">
       <div className="cl-map-page__main">
         <div className="cl-map-wrap">
-          <WorldMap height="100%">
-            <EntityMarkers
-              entities={filteredEntities}
-              selectedId={selectedId}
-              highlightedIds={highlightedIds}
-              onMarkerClick={handleMarkerClick}
-            />
-          </WorldMap>
-
-          <div className="cl-map-legend">
-            <span className="cl-map-legend-item cl-map-legend-item--partner">
-              Partner region
-            </span>
-            <span className="cl-map-legend-item cl-map-legend-item--other">
-              Other
-            </span>
-            <span className="cl-map-legend-divider" />
-            <span className="cl-map-legend-item cl-map-legend-item--stakeholder">
-              Stakeholder
-            </span>
-            <span className="cl-map-legend-item cl-map-legend-item--instrument">
-              Instrument
-            </span>
-          </div>
+          <WorldMap height="100%" onCountryClick={handleCountryClick} />
         </div>
+
+        {selectedCountry && (
+          <CountryEntityList
+            countryName={selectedCountry.name}
+            entities={countryEntities}
+            isOpen={isCountryListOpen}
+            onClose={handleCloseCountryList}
+            onSelectEntity={handleListEntitySelect}
+          />
+        )}
 
         <EntityDetailPanel
           entity={selectedEntity}
@@ -85,8 +97,6 @@ function MapViewContent() {
     </div>
   )
 }
-
-// ─── MapView — public export ──────────────────────────────────────────────────
 
 export function MapView() {
   return (
