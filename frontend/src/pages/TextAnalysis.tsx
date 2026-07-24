@@ -2,12 +2,12 @@ import { useMemo, useEffect, useRef, useState } from 'react'
 import * as d3 from 'd3'
 import { scaleSqrt } from 'd3-scale'
 import cloud from 'd3-cloud'
-import { mockEntities } from '@/data/mockData'
+import { useDataContext } from '@/context/DataContext'
 import { filterEntities } from '@/utils/filterEntities'
 import type { EntityFilters } from '@/types/filters'
 import { DEFAULT_FILTERS } from '@/types/filters'
+import type { Entity } from '@/types/entities'
 
-// Stop words
 const STOP_WORDS = new Set([
   'a','about','above','after','again','against','all','also','an','and','any','are',
   'as','at','be','been','being','between','both','but','by','can','d','did','do',
@@ -28,11 +28,10 @@ const STOP_WORDS = new Set([
 const COLOR_A = '#2563eb'
 const COLOR_B = '#ea580c'
 
-const ALL_COUNTRIES = [...new Set(mockEntities.map(e => e.country))].sort()
-
 const TEXT_FIELDS = [
-  'description', 'relationToITC', 'mainObjectives',
+  'description', 'itcApproach', 'relationToITC', 'mainObjectives',
   'additionalRemarks', 'equityAddressed', 'relevanceToINTRACOMP',
+  'functionalRole',
 ] as const
 
 function extractWords(text: string): string[] {
@@ -44,9 +43,9 @@ function extractWords(text: string): string[] {
     .filter(w => w.length > 2 && !STOP_WORDS.has(w))
 }
 
-function buildFrequency(country: string): Map<string, number> {
+function buildFrequency(country: string, allEntities: Entity[]): Map<string, number> {
   const filters: EntityFilters = { ...DEFAULT_FILTERS, countries: [country] }
-  const entities = filterEntities(mockEntities, filters)
+  const entities = filterEntities(allEntities, filters)
   const freq = new Map<string, number>()
   for (const e of entities) {
     for (const field of TEXT_FIELDS) {
@@ -72,23 +71,16 @@ interface FreqWord {
 
 const MAX_WORDS_PER_CLOUD = 60
 
-function buildFreqWords(country: string): FreqWord[] {
-  const freq = buildFrequency(country)
+function buildFreqWords(country: string, allEntities: Entity[]): FreqWord[] {
+  const freq = buildFrequency(country, allEntities)
   return [...freq.entries()]
     .map(([text, count]) => ({ text, count }))
     .sort((a, b) => b.count - a.count)
     .slice(0, MAX_WORDS_PER_CLOUD)
 }
 
-// A single word cloud for one country. `maxCount` is shared across both
-// clouds so word sizes stay on the same scale and remain comparable
-// side by side.
 function WordCloud({
-  words,
-  width,
-  height,
-  color,
-  maxCount,
+  words, width, height, color, maxCount,
 }: {
   words: FreqWord[]
   width: number
@@ -125,7 +117,7 @@ function WordCloud({
         nodes.attr('font-size', (d: FreqWord) => String(d.size ?? 12) + 'px')
         nodes.attr('transform', (d: FreqWord) => 'translate(' + String(d.x) + ',' + String(d.y) + ') rotate(' + String(d.rotate) + ')')
         nodes.text((d: FreqWord) => d.text ?? '')
-        nodes.append('title').text((d: FreqWord) => '"' + d.text + '" — ' + String(d.count) + ' occurrence' + (d.count === 1 ? '' : 's'))
+        nodes.append('title').text((d: FreqWord) => '"' + d.text + '" - ' + String(d.count) + ' occurrence' + (d.count === 1 ? '' : 's'))
       })
 
     layout.start()
@@ -136,11 +128,17 @@ function WordCloud({
 }
 
 export function TextAnalysis() {
+  const { entities } = useDataContext()
   const [countryA, setCountryA] = useState<string>('')
   const [countryB, setCountryB] = useState<string>('')
 
   const cloudRowRef = useRef<HTMLDivElement>(null)
   const [rowSize, setRowSize] = useState({ width: 700, height: 420 })
+
+  const allCountries = useMemo(
+    () => [...new Set(entities.map(e => e.country).filter(Boolean))].sort(),
+    [entities],
+  )
 
   useEffect(() => {
     if (!cloudRowRef.current) return
@@ -152,34 +150,41 @@ export function TextAnalysis() {
     return () => ro.disconnect()
   }, [])
 
-  // Each cloud gets half the row width, minus the divider between them.
-  const paneWidth = Math.max(0, Math.floor((rowSize.width - 1) / 2))
+  const paneWidth  = Math.max(0, Math.floor((rowSize.width - 1) / 2))
   const paneHeight = rowSize.height
-
   const ready = Boolean(countryA && countryB && countryA !== countryB)
 
   const wordsA = useMemo(
-    () => (ready ? buildFreqWords(countryA) : []),
-    [ready, countryA],
+    () => (ready ? buildFreqWords(countryA, entities) : []),
+    [ready, countryA, entities],
   )
   const wordsB = useMemo(
-    () => (ready ? buildFreqWords(countryB) : []),
-    [ready, countryB],
+    () => (ready ? buildFreqWords(countryB, entities) : []),
+    [ready, countryB, entities],
   )
-  // Shared scale domain so a word's size means the same thing in both clouds.
   const maxCount = useMemo(
     () => Math.max(1, ...wordsA.map(w => w.count), ...wordsB.map(w => w.count)),
     [wordsA, wordsB],
   )
 
   const entityCountA = useMemo(
-    () => countryA ? filterEntities(mockEntities, { ...DEFAULT_FILTERS, countries: [countryA] }).length : 0,
-    [countryA],
+    () => countryA ? filterEntities(entities, { ...DEFAULT_FILTERS, countries: [countryA] }).length : 0,
+    [countryA, entities],
   )
   const entityCountB = useMemo(
-    () => countryB ? filterEntities(mockEntities, { ...DEFAULT_FILTERS, countries: [countryB] }).length : 0,
-    [countryB],
+    () => countryB ? filterEntities(entities, { ...DEFAULT_FILTERS, countries: [countryB] }).length : 0,
+    [countryB, entities],
   )
+
+  if (entities.length === 0) {
+    return (
+      <div className="cl-ta-empty-prompt">
+        <span className="cl-ta-empty-prompt__icon">☁</span>
+        <p className="cl-ta-empty-prompt__title">No data loaded</p>
+        <p className="cl-ta-empty-prompt__sub">Import an Excel file to enable text analysis.</p>
+      </div>
+    )
+  }
 
   return (
     <div className="cl-text-analysis-page">
@@ -192,7 +197,7 @@ export function TextAnalysis() {
             onChange={e => { const v = e.target.value; setCountryA(v); if (v === countryB) setCountryB('') }}
           >
             <option value="">Select a country...</option>
-            {ALL_COUNTRIES.map(c => (
+            {allCountries.map(c => (
               <option key={c} value={c} disabled={c === countryB}>{c}</option>
             ))}
           </select>
@@ -207,7 +212,7 @@ export function TextAnalysis() {
             onChange={e => { const v = e.target.value; setCountryB(v); if (v === countryA) setCountryA('') }}
           >
             <option value="">Select a country...</option>
-            {ALL_COUNTRIES.map(c => (
+            {allCountries.map(c => (
               <option key={c} value={c} disabled={c === countryA}>{c}</option>
             ))}
           </select>

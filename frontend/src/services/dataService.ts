@@ -11,9 +11,9 @@
  */
 
 // ─── Data source ──────────────────────────────────────────────────────────────
-// Future integration point: replace these imports with SheetJS parsing logic.
-// e.g. import { parseStakeholders, parseInstruments } from '@/utils/excelParser';
-import { mockStakeholders, mockInstruments, mockEntities } from '@/data/mockData';
+// Data is now loaded at runtime via Excel import (see DataContext / excelParser).
+// This service operates on empty arrays by default; callers that need live data
+// should read from DataContext / FilterContext instead.
 
 import type {
   Entity,
@@ -27,11 +27,10 @@ import type {
 } from '@/types/entities';
 
 // ─── Internal dataset access ──────────────────────────────────────────────────
-// Raw arrays are never exposed directly outside this module.
 
-const _stakeholders: Stakeholder[] = mockStakeholders;
-const _instruments: Instrument[] = mockInstruments;
-const _entities: Entity[] = mockEntities;
+const _stakeholders: Stakeholder[] = [];
+const _instruments: Instrument[] = [];
+const _entities: Entity[] = [];
 
 /** O(1) lookup map built once at module load time. */
 const _entityMap = new Map<string, Entity>(_entities.map((e) => [e.id, e]));

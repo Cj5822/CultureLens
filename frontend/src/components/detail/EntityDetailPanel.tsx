@@ -4,8 +4,6 @@ import type { Entity, Stakeholder, Instrument } from '@/types/entities'
 import { DetailField } from './DetailField'
 import { ConnectionList } from './ConnectionList'
 
-// ─── Props ─────────────────────────────────────────────────────────────────────
-
 export interface EntityDetailPanelProps {
   entity: Entity | null
   entities: Entity[]
@@ -13,8 +11,6 @@ export interface EntityDetailPanelProps {
   onClose: () => void
   onSelectConnection: (entity: Entity) => void
 }
-
-// ─── Helpers ───────────────────────────────────────────────────────────────────
 
 function isStakeholder(e: Entity): e is Stakeholder {
   return e.category === 'stakeholders'
@@ -27,8 +23,6 @@ function isInstrument(e: Entity): e is Instrument {
 function formatList(items: string[]): string {
   return items.join(', ')
 }
-
-// ─── Focus trap ────────────────────────────────────────────────────────────────
 
 const FOCUSABLE = [
   'a[href]',
@@ -59,22 +53,6 @@ function trapFocus(panelEl: HTMLElement, event: KeyboardEvent) {
   }
 }
 
-// ─── EntityDetailPanel ─────────────────────────────────────────────────────────
-
-/**
- * Slide-in side panel (desktop) / bottom sheet (mobile) that displays the full
- * field set for a selected INTRACOMP entity.
- *
- * Accessibility:
- *  - role="dialog" with aria-modal and aria-labelledby
- *  - Focus trapped inside while open
- *  - ESC key closes the panel
- *  - External links use target="_blank" rel="noopener noreferrer"
- *
- * Animation:
- *  - CSS transform transition (translate X on desktop, Y on mobile)
- *  - Respects prefers-reduced-motion via CSS media query
- */
 export function EntityDetailPanel({
   entity,
   entities,
@@ -86,22 +64,18 @@ export function EntityDetailPanel({
   const scrollRef   = useRef<HTMLDivElement>(null)
   const closeBtnRef = useRef<HTMLButtonElement>(null)
 
-  // Derive connected entities from the current entity's connections array
   const connectedEntities: Entity[] = entity
     ? entity.connections
         .map((id) => entities.find((e) => e.id === id))
         .filter((e): e is Entity => e !== undefined)
     : []
 
-  // ── Focus management ──────────────────────────────────────────────────────
   useEffect(() => {
     if (isOpen && panelRef.current) {
-      // Move focus into the panel when it opens
       closeBtnRef.current?.focus()
     }
   }, [isOpen, entity])
 
-  // ── Keyboard handling (ESC + focus trap) ──────────────────────────────────
   useEffect(() => {
     if (!isOpen) return
 
@@ -120,7 +94,6 @@ export function EntityDetailPanel({
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [isOpen, onClose])
 
-  // ── Scroll-to-top + entity selection ─────────────────────────────────────
   const handleSelectConnection = useCallback(
     (connected: Entity) => {
       scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
@@ -129,17 +102,14 @@ export function EntityDetailPanel({
     [onSelectConnection],
   )
 
-  // ── Render ────────────────────────────────────────────────────────────────
   return createPortal(
     <>
-      {/* Backdrop — click to close */}
       <div
         className={`cl-detail-backdrop${isOpen ? ' cl-detail-backdrop--visible' : ''}`}
         aria-hidden="true"
         onClick={onClose}
       />
 
-      {/* Panel */}
       <div
         ref={panelRef}
         role="dialog"
@@ -206,7 +176,7 @@ export function EntityDetailPanel({
           {entity ? (
             <dl className="cl-detail-fields">
 
-              {/* ── Shared fields ─────────────────────────────────────── */}
+              {/* Shared fields */}
               <DetailField label="Country" value={entity.country} />
               <DetailField
                 label="Thematic focus"
@@ -236,27 +206,31 @@ export function EntityDetailPanel({
                 label="Recommended next steps"
                 value={entity.recommendedNextSteps}
               />
-              <DetailField
-                label="Additional remarks"
-                value={entity.additionalRemarks}
-              />
+              {entity.additionalRemarks && (
+                <DetailField
+                  label="Additional remarks"
+                  value={entity.additionalRemarks}
+                />
+              )}
 
-              {/* ── Stakeholder-only fields ───────────────────────────── */}
+              {/* Stakeholder-only fields */}
               {isStakeholder(entity) && (
                 <>
-                  <DetailField label="Description" value={entity.description} />
+                  {entity.functionalRole && (
+                    <DetailField label="Functional role" value={entity.functionalRole} />
+                  )}
+                  <DetailField label="Resources" value={entity.description} />
                   <DetailField
                     label="Relevance to INTRACOMP"
                     value={entity.relevanceToINTRACOMP}
                   />
-                  <DetailField
-                    label="Relation to ITC"
-                    value={entity.relationToITC}
-                  />
+                  {entity.itcApproach && (
+                    <DetailField label="Approach to ITC" value={entity.itcApproach} />
+                  )}
                 </>
               )}
 
-              {/* ── Instrument-only fields ────────────────────────────── */}
+              {/* Instrument-only fields */}
               {isInstrument(entity) && (
                 <>
                   <DetailField
@@ -271,10 +245,13 @@ export function EntityDetailPanel({
                     label="Main objectives"
                     value={entity.mainObjectives}
                   />
+                  {entity.itcApproach && (
+                    <DetailField label="Approach to ITC" value={entity.itcApproach} />
+                  )}
                 </>
               )}
 
-              {/* ── External link ─────────────────────────────────────── */}
+              {/* External link */}
               {entity.link && (
                 <div className="cl-detail-field">
                   <dt className="cl-detail-field__label">External link</dt>
@@ -311,7 +288,7 @@ export function EntityDetailPanel({
             </dl>
           ) : null}
 
-          {/* ── Connections section ────────────────────────────────────── */}
+          {/* Connections section */}
           {entity && (
             <section className="cl-detail-connections" aria-labelledby="cl-detail-connections-heading">
               <h3

@@ -72,8 +72,10 @@ export interface BaseEntity {
   languages: string[];
   /** max 500 characters */
   equityAddressed: string;
-  /** max 100 characters */
+  /** max 500 characters */
   intendedAudience: string;
+  /** Approach to and/or understanding of ITC (col L in both sheets) */
+  itcApproach: string;
   country: string;
   lat: number;
   lng: number;
@@ -82,11 +84,13 @@ export interface BaseEntity {
 export interface Stakeholder extends BaseEntity {
   category: "stakeholders";
   actorType: ActorType;
-  /** max 500 characters */
+  /** Functional role of this stakeholder (col G) */
+  functionalRole: string;
+  /** Resources / descriptive context (col H, replaces old "description") */
   description: string;
   /** max 200 characters */
   relevanceToINTRACOMP: string;
-  /** max 500 characters */
+  /** @deprecated use itcApproach — kept for backward compat */
   relationToITC: string;
 }
 

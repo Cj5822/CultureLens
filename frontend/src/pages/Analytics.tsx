@@ -150,7 +150,7 @@ export function Analytics() {
                 axisLine={false}
                 tickLine={false}
               />
-              <Tooltip contentStyle={tooltipStyle} cursor={{ fill: 'var(--color-muted)' }} />
+              <Tooltip contentStyle={tooltipStyle} cursor={{ fill: 'rgba(0,0,0,0.04)' }} />
               <Bar dataKey="value" name="Entries" fill="#4f86c6" radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>
@@ -173,7 +173,7 @@ export function Analytics() {
                 axisLine={false}
                 tickLine={false}
               />
-              <Tooltip contentStyle={tooltipStyle} cursor={{ fill: 'var(--color-muted)' }} />
+              <Tooltip contentStyle={tooltipStyle} cursor={{ fill: 'rgba(0,0,0,0.04)' }} />
               <Bar dataKey="value" name="Entries" fill="#4cb8a0" radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>
