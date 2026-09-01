@@ -5,16 +5,19 @@ import { FilterSidebar } from '@/components/filters/FilterSidebar'
 import { ImportModal } from '@/components/import/ImportModal'
 import { MapView } from './MapView'
 import { Analytics } from './Analytics'
+import { ParallelSets } from './ParallelSets'
 import { ClusterAnalysis } from './ClusterAnalysis'
 import { NetworkGraph } from './NetworkGraph'
 import { TextAnalysis } from './TextAnalysis'
 import { FilterContextProvider, useFilterContext } from '@/context/FilterContext'
+import { ParallelSetsColumnsProvider } from '@/context/ParallelSetsContext'
 import { DataContextProvider, useDataContext } from '@/context/DataContext'
 import type { ViewType } from '@/types'
 
 const PAGE_COMPONENTS: Record<ViewType, React.FC> = {
   map:          MapView,
   analytics:    Analytics,
+  parallelsets: ParallelSets,
   cluster:      ClusterAnalysis,
   network:      NetworkGraph,
   textanalysis: TextAnalysis,
@@ -23,9 +26,10 @@ const PAGE_COMPONENTS: Record<ViewType, React.FC> = {
 interface FilterSidebarShellProps {
   open: boolean
   onCollapse: () => void
+  activeView: ViewType
 }
 
-function FilterSidebarShell({ open, onCollapse }: FilterSidebarShellProps) {
+function FilterSidebarShell({ open, onCollapse, activeView }: FilterSidebarShellProps) {
   const { filters, setFilters, filteredEntities, countries } = useFilterContext()
   if (!open) return null
 
@@ -36,6 +40,7 @@ function FilterSidebarShell({ open, onCollapse }: FilterSidebarShellProps) {
       resultCount={filteredEntities.length}
       countries={countries}
       onCollapse={onCollapse}
+      activeView={activeView}
     />
   )
 }
@@ -65,41 +70,44 @@ function DashboardShell() {
 
   return (
     <FilterContextProvider>
-      {importOpen && <ImportModal onClose={() => setImportOpen(false)} />}
-      <div className="cl-app">
-        <Sidebar
-          activeView={activeView}
-          onNavigate={setActiveView}
-          onImportClick={() => setImportOpen(true)}
-        />
-
-        {hasData && (
-          <FilterSidebarShell
-            open={filtersOpen}
-            onCollapse={() => setFiltersOpen(false)}
+      <ParallelSetsColumnsProvider>
+        {importOpen && <ImportModal onClose={() => setImportOpen(false)} />}
+        <div className="cl-app">
+          <Sidebar
+            activeView={activeView}
+            onNavigate={setActiveView}
+            onImportClick={() => setImportOpen(true)}
           />
-        )}
 
-        <div className={`cl-main${!hasData || filtersOpen ? '' : ' cl-main--filters-hidden'}`}>
-          {hasData && !filtersOpen && (
-            <button
-              type="button"
-              className="cl-filter-expand-btn"
-              onClick={() => setFiltersOpen(true)}
-              aria-label="Show filters"
-              title="Show filters"
-            >
-              <SlidersHorizontal size={14} aria-hidden />
-            </button>
+          {hasData && (
+            <FilterSidebarShell
+              open={filtersOpen}
+              onCollapse={() => setFiltersOpen(false)}
+              activeView={activeView}
+            />
           )}
-          <main className="cl-content">
-            {hasData
-              ? <PageComponent />
-              : <EmptyStatePrompt onImportClick={() => setImportOpen(true)} />
-            }
-          </main>
+
+          <div className={`cl-main${!hasData || filtersOpen ? '' : ' cl-main--filters-hidden'}`}>
+            {hasData && !filtersOpen && (
+              <button
+                type="button"
+                className="cl-filter-expand-btn"
+                onClick={() => setFiltersOpen(true)}
+                aria-label="Show filters"
+                title="Show filters"
+              >
+                <SlidersHorizontal size={14} aria-hidden />
+              </button>
+            )}
+            <main className="cl-content">
+              {hasData
+                ? <PageComponent />
+                : <EmptyStatePrompt onImportClick={() => setImportOpen(true)} />
+              }
+            </main>
+          </div>
         </div>
-      </div>
+      </ParallelSetsColumnsProvider>
     </FilterContextProvider>
   )
 }

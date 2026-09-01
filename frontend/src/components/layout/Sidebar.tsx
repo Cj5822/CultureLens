@@ -1,4 +1,4 @@
-import { Map, BarChart2, Layers, Share2, Type, Upload } from 'lucide-react';
+import { Map, BarChart2, Waves, Layers, Share2, Type, Upload } from 'lucide-react';
 import type { ViewType } from '@/types';
 import { useDataContext } from '@/context/DataContext';
 
@@ -11,6 +11,7 @@ interface SidebarProps {
 const navItems: { id: ViewType; label: string; Icon: React.FC<{ size?: number; strokeWidth?: number }> }[] = [
   { id: 'map',       label: 'Map View',        Icon: Map },
   { id: 'analytics', label: 'Analytics',       Icon: BarChart2 },
+  { id: 'parallelsets', label: 'Parallel Sets',   Icon: Waves },
   { id: 'cluster',      label: 'Cluster Analysis', Icon: Layers },
   { id: 'network',      label: 'Network Graph',   Icon: Share2 },
   { id: 'textanalysis', label: 'Text Analysis',   Icon: Type },
