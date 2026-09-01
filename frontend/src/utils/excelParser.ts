@@ -48,6 +48,13 @@ const COUNTRY_COORDS: Record<string, { lat: number; lng: number }> = {
   'switzerland':    { lat: 47.3769, lng: 8.5417  },
   'eu':             { lat: 50.8503, lng: 4.3517  },
   'new zealand':    { lat: -41.2865, lng: 174.7762 },
+  // Added: these appear as "context countries" in countryMockData.ts but were
+  // previously missing here, so any data for them would silently plot at (0,0).
+  'denmark':        { lat: 55.6761, lng: 12.5683 },
+  'croatia':        { lat: 45.8150, lng: 15.9819 },
+  'czech republic': { lat: 50.0755, lng: 14.4378 },
+  'czechia':        { lat: 50.0755, lng: 14.4378 },
+  'hungary':        { lat: 47.4979, lng: 19.0402 },
 };
 
 function coordsForCountry(country: string): { lat: number; lng: number } {
@@ -413,9 +420,15 @@ function parseInstrumentRow(
  * Parse an INTRACOMP Policy Mapping Template Excel file (ArrayBuffer).
  * Supports both the current format (Intro sheet + metadata rows) and legacy
  * files (headers on row 1).
+ *
+ * Note: `_idCounter` is intentionally *not* reset here. The app supports
+ * importing several files in one session (see DataContext), and resetting
+ * the counter per call would make every file generate the same IDs
+ * (STK-IMP-001, ...), causing collisions once their entities are merged
+ * together. Letting the counter keep climbing across calls guarantees every
+ * generated ID is unique for the lifetime of the page.
  */
 export function parseExcelFile(buffer: ArrayBuffer): ParseResult {
-  _idCounter = 0;
   const warnings: string[] = [];
 
   const wb = XLSX.read(buffer, { type: 'array' });
