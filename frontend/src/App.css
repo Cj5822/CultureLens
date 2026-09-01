@@ -2684,3 +2684,14 @@ body:has(.cl-cel-panel--open) .cl-detail-panel--open {
   font-size: 11px;
   color: #6b7280;
 }
+
+/* ── Leaflet / Tailwind compatibility fix ───────────────── */
+/* Tailwind preflight sets img { max-width: 100% } which    */
+/* breaks Leaflet tile positioning (white boxes).            */
+.leaflet-container img {
+  max-width: none !important;
+  max-height: none !important;
+}
+.leaflet-tile-container img {
+  max-width: none !important;
+}
