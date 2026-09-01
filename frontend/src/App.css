@@ -27,12 +27,16 @@
 
   /* Parallel sets — neutral (non colour-defining) node fill */
   --cl-parallelsets-neutral: oklch(0.64 0 0);
+
+  /* Parallel sets — neutral (non colour-defining) node fill */
+  --cl-parallelsets-neutral: oklch(0.64 0 0);
 }
 
 .dark {
   --cl-topbar-bg: oklch(0.18 0 0);
   --cl-topbar-border: oklch(0.28 0 0);
   --cl-content-bg: oklch(0.145 0 0);
+  --cl-parallelsets-neutral: oklch(0.40 0 0);
   --cl-parallelsets-neutral: oklch(0.40 0 0);
 }
 
@@ -559,6 +563,25 @@ html, body, #root {
   margin-top: 1.5px;
 }
 
+.cl-filter-sidebar__hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 0 12px 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--color-muted);
+  color: var(--color-muted-foreground);
+  font-size: 10.5px;
+  line-height: 1.4;
+  flex-shrink: 0;
+}
+
+.cl-filter-sidebar__hint svg {
+  flex-shrink: 0;
+  margin-top: 1.5px;
+}
+
 .cl-filter-search {
   position: relative;
   padding: 0 12px 10px;
@@ -609,7 +632,14 @@ html, body, #root {
   align-items: stretch;
 }
 
+.cl-filter-section__header {
+  display: flex;
+  align-items: stretch;
+}
+
 .cl-filter-section__toggle {
+  flex: 1;
+  min-width: 0;
   flex: 1;
   min-width: 0;
   display: flex;
@@ -629,6 +659,49 @@ html, body, #root {
 
 .cl-filter-section__toggle:hover {
   background: var(--color-muted);
+}
+
+.cl-filter-section__action {
+  display: flex;
+  align-items: center;
+  padding-right: 10px;
+  flex-shrink: 0;
+}
+
+.cl-filter-column-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-background);
+  color: var(--color-muted-foreground);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.cl-filter-column-toggle:hover:not(:disabled) {
+  border-color: var(--cl-accent);
+  color: var(--color-foreground);
+}
+
+.cl-filter-column-toggle--active {
+  background: var(--cl-accent);
+  border-color: var(--cl-accent);
+  color: white;
+}
+
+.cl-filter-column-toggle--active:hover:not(:disabled) {
+  border-color: var(--cl-accent);
+  color: white;
+  opacity: 0.85;
+}
+
+.cl-filter-column-toggle:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
 }
 
 .cl-filter-section__action {
@@ -2755,6 +2828,163 @@ body:has(.cl-cel-panel--open) .cl-detail-panel--open {
 .cl-cel-legend__label {
   font-size: 11px;
   color: #6b7280;
+}
+
+/* ── Parallel Sets page ────────────────────────────────────────────────────── */
+.cl-parallelsets-page {
+  padding: 24px;
+  height: 100%;
+  overflow-y: auto;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cl-parallelsets-chart-card {
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 16px 20px;
+  flex-shrink: 0;
+}
+
+.cl-parallelsets-chart-card__title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-foreground);
+  margin: 0 0 4px;
+  letter-spacing: -0.01em;
+}
+
+.cl-parallelsets-chart-card__hint {
+  font-size: 11px;
+  color: var(--color-muted-foreground);
+  margin: 0 0 12px;
+}
+
+.cl-parallelsets-chart {
+  position: relative;
+  width: 100%;
+}
+
+.cl-parallelsets-chart svg {
+  width: 100%;
+  display: block;
+}
+
+.cl-parallelsets-empty {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12.5px;
+  color: var(--color-muted-foreground);
+}
+
+.cl-parallelsets-col-title {
+  font-size: 11px;
+  font-weight: 600;
+  fill: var(--color-foreground);
+}
+
+.cl-parallelsets-node {
+  cursor: pointer;
+}
+
+.cl-parallelsets-ribbon {
+  cursor: pointer;
+  stroke: none;
+  transition: opacity 0.15s;
+}
+
+.cl-parallelsets-node-label {
+  font-size: 10.5px;
+  fill: var(--color-foreground);
+  pointer-events: none;
+}
+
+.cl-parallelsets-node-count {
+  fill: var(--color-muted-foreground);
+}
+
+.cl-parallelsets-node-count-inline {
+  font-size: 9.5px;
+  font-weight: 700;
+  fill: white;
+  pointer-events: none;
+}
+
+.cl-parallelsets-tooltip {
+  position: fixed;
+  z-index: 60;
+  max-width: 260px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.12);
+  font-size: 11px;
+  pointer-events: none;
+}
+
+.cl-parallelsets-tooltip__title {
+  font-weight: 700;
+  color: var(--color-foreground);
+  margin-bottom: 3px;
+}
+
+.cl-parallelsets-tooltip__line {
+  color: var(--color-muted-foreground);
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cl-parallelsets-selection {
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.cl-parallelsets-selection__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--cl-content-bg);
+  gap: 8px;
+}
+
+.cl-parallelsets-selection__title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-foreground);
+}
+
+.cl-parallelsets-selection__close {
+  border: none;
+  background: transparent;
+  color: var(--color-muted-foreground);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px 6px;
+}
+
+.cl-parallelsets-selection__close:hover {
+  color: var(--color-foreground);
+}
+
+.cl-parallelsets-selection__list {
+  display: flex;
+  flex-direction: column;
+  padding: 6px;
+  gap: 2px;
+  max-height: 260px;
+  overflow-y: auto;
 }
 
 /* ── Parallel Sets page ────────────────────────────────────────────────────── */
