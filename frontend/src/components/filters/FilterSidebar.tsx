@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
-import { X, Search, ChevronLeft } from 'lucide-react'
+import { X, Search, ChevronLeft, Columns3 } from 'lucide-react'
 import type { EntityFilters } from '@/types/filters'
+import type { ViewType } from '@/types'
 import type {
   ActorType,
   InstrumentType,
@@ -23,6 +24,7 @@ import {
 } from '@/types/filters'
 import { FilterSection } from './FilterSection'
 import { MultiSelectFilter } from './MultiSelectFilter'
+import { useParallelSetsColumns } from '@/context/ParallelSetsContext'
 
 export interface FilterSidebarProps {
   filters: EntityFilters
@@ -30,6 +32,8 @@ export interface FilterSidebarProps {
   resultCount: number
   countries: readonly string[]
   onCollapse?: () => void
+  /** When 'parallelsets', each section gets a "show as column" toggle. */
+  activeView?: ViewType
 }
 
 function countActive(filters: EntityFilters): number {
@@ -47,11 +51,49 @@ function countActive(filters: EntityFilters): number {
   )
 }
 
-export function FilterSidebar({ filters, onChange, resultCount, countries, onCollapse }: FilterSidebarProps) {
+// ─── Parallel Sets column toggle ────────────────────────────────────────────
+//
+// Rendered in a FilterSection's header when the Parallel Sets view is active,
+// so the same sidebar that filters entities also picks which fields show up
+// as columns in the diagram — no separate control panel needed.
+
+function ColumnToggleButton({ dimensionKey }: { dimensionKey: string }) {
+  const { isColumnActive, toggleColumn, canAdd, canRemove } = useParallelSetsColumns()
+  const active = isColumnActive(dimensionKey)
+  const disabled = active ? !canRemove : !canAdd
+  const title = active
+    ? canRemove
+      ? 'Remove from the Parallel Sets diagram'
+      : 'At least 2 variables must stay shown'
+    : canAdd
+      ? 'Show as a column in the Parallel Sets diagram'
+      : 'Up to 5 variables can be shown at once'
+
+  return (
+    <button
+      type="button"
+      className={`cl-filter-column-toggle${active ? ' cl-filter-column-toggle--active' : ''}`}
+      onClick={() => toggleColumn(dimensionKey)}
+      disabled={disabled}
+      title={title}
+      aria-pressed={active}
+      aria-label={title}
+    >
+      <Columns3 size={12} aria-hidden />
+    </button>
+  )
+}
+
+export function FilterSidebar({ filters, onChange, resultCount, countries, onCollapse, activeView }: FilterSidebarProps) {
   const activeCount = useMemo(() => countActive(filters), [filters])
+  const showColumnToggles = activeView === 'parallelsets'
 
   function update<K extends keyof EntityFilters>(key: K, value: EntityFilters[K]) {
     onChange({ ...filters, [key]: value })
+  }
+
+  function columnToggle(dimensionKey: string) {
+    return showColumnToggles ? <ColumnToggleButton dimensionKey={dimensionKey} /> : undefined
   }
 
   return (
@@ -95,6 +137,12 @@ export function FilterSidebar({ filters, onChange, resultCount, countries, onCol
         {resultCount} result{resultCount !== 1 ? 's' : ''}
       </p>
 
+      {showColumnToggles && (
+        <p className="cl-filter-sidebar__hint">
+          <Columns3 size={11} aria-hidden /> Toggle a section to add or remove it as a column in the Parallel Sets diagram.
+        </p>
+      )}
+
       {/* Free-text search */}
       <div className="cl-filter-search">
         <Search size={13} className="cl-filter-search__icon" aria-hidden />
@@ -110,7 +158,7 @@ export function FilterSidebar({ filters, onChange, resultCount, countries, onCol
 
       {/* Filter sections */}
       <div className="cl-filter-sidebar__sections">
-        <FilterSection title="Category" defaultOpen>
+        <FilterSection title="Category" defaultOpen headerAction={columnToggle('category')}>
           <MultiSelectFilter<'stakeholders' | 'instruments'>
             label="Category"
             options={CATEGORY_OPTIONS}
@@ -119,7 +167,7 @@ export function FilterSidebar({ filters, onChange, resultCount, countries, onCol
           />
         </FilterSection>
 
-        <FilterSection title="Actor Type">
+        <FilterSection title="Actor Type" headerAction={columnToggle('type')}>
           <MultiSelectFilter<ActorType>
             label="Actor type"
             options={ACTOR_TYPE_OPTIONS}
@@ -128,7 +176,7 @@ export function FilterSidebar({ filters, onChange, resultCount, countries, onCol
           />
         </FilterSection>
 
-        <FilterSection title="Instrument Type">
+        <FilterSection title="Instrument Type" headerAction={columnToggle('type')}>
           <MultiSelectFilter<InstrumentType>
             label="Instrument type"
             options={INSTRUMENT_TYPE_OPTIONS}
@@ -137,7 +185,7 @@ export function FilterSidebar({ filters, onChange, resultCount, countries, onCol
           />
         </FilterSection>
 
-        <FilterSection title="Thematic Focus">
+        <FilterSection title="Thematic Focus" headerAction={columnToggle('primaryTheme')}>
           <MultiSelectFilter<ThematicFocus>
             label="Thematic focus"
             options={THEMATIC_FOCUS_OPTIONS}
@@ -146,7 +194,7 @@ export function FilterSidebar({ filters, onChange, resultCount, countries, onCol
           />
         </FilterSection>
 
-        <FilterSection title="Geographical Scope">
+        <FilterSection title="Geographical Scope" headerAction={columnToggle('primaryGeographicalScope')}>
           <MultiSelectFilter<GeographicalScope>
             label="Geographical scope"
             options={GEOGRAPHICAL_SCOPE_OPTIONS}
@@ -155,7 +203,7 @@ export function FilterSidebar({ filters, onChange, resultCount, countries, onCol
           />
         </FilterSection>
 
-        <FilterSection title="Impact & Influence">
+        <FilterSection title="Impact & Influence" headerAction={columnToggle('impactInfluence')}>
           <MultiSelectFilter<ImpactInfluence>
             label="Impact and influence"
             options={IMPACT_INFLUENCE_OPTIONS}
@@ -164,7 +212,7 @@ export function FilterSidebar({ filters, onChange, resultCount, countries, onCol
           />
         </FilterSection>
 
-        <FilterSection title="Implementation Status">
+        <FilterSection title="Implementation Status" headerAction={columnToggle('implementationStatus')}>
           <MultiSelectFilter<ImplementationStatus>
             label="Implementation status"
             options={IMPLEMENTATION_STATUS_OPTIONS}
@@ -173,7 +221,7 @@ export function FilterSidebar({ filters, onChange, resultCount, countries, onCol
           />
         </FilterSection>
 
-        <FilterSection title="Recommended Next Steps">
+        <FilterSection title="Recommended Next Steps" headerAction={columnToggle('recommendedNextSteps')}>
           <MultiSelectFilter<RecommendedNextSteps>
             label="Recommended next steps"
             options={RECOMMENDED_NEXT_STEPS_OPTIONS}
@@ -183,7 +231,7 @@ export function FilterSidebar({ filters, onChange, resultCount, countries, onCol
         </FilterSection>
 
         {countries.length > 0 && (
-          <FilterSection title="Country / Partner Region">
+          <FilterSection title="Country / Partner Region" headerAction={columnToggle('country')}>
             <MultiSelectFilter<string>
               label="Country"
               options={countries}

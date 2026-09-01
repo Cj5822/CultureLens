@@ -1,4 +1,4 @@
-export type ViewType = 'map' | 'analytics' | 'cluster' | 'network' | 'textanalysis';
+export type ViewType = 'map' | 'analytics' | 'parallelsets' | 'cluster' | 'network' | 'textanalysis';
 
 export interface NavItem {
   id: ViewType;
