@@ -31,6 +31,11 @@ const NAME_TO_ISO3: Record<string, string> = {
   'switzerland':    'CHE',
   'eu':             'BEL',
   'new zealand':    'NZL',
+  'denmark':        'DNK',
+  'croatia':        'HRV',
+  'czech republic': 'CZE',
+  'czechia':        'CZE',
+  'hungary':        'HUN',
 }
 
 // world-atlas encodes country IDs as numeric ISO 3166-1 strings (e.g. "246" = Finland)

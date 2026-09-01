@@ -2123,6 +2123,97 @@ html, body, #root {
   line-height: 1.5;
 }
 
+/* ── Loaded imports list ───────────────────────────────── */
+.cl-loaded-imports {
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.cl-loaded-imports__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--color-muted);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--color-muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.cl-loaded-imports__clear {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  font-family: inherit;
+  text-transform: none;
+  letter-spacing: normal;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.cl-loaded-imports__list {
+  display: flex;
+  flex-direction: column;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.cl-loaded-imports__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--color-border);
+}
+
+.cl-loaded-imports__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.cl-loaded-imports__country {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-foreground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cl-loaded-imports__meta {
+  font-size: 11px;
+  color: var(--color-muted-foreground);
+}
+
+.cl-loaded-imports__remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  color: var(--color-muted-foreground);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.cl-loaded-imports__remove:hover {
+  background: oklch(0.95 0.03 27);
+  color: oklch(0.45 0.18 27);
+}
+
 /* ── Drop zone ──────────────────────────────────────────── */
 .cl-drop-zone {
   border: 2px dashed var(--color-border);

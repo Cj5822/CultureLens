@@ -3,12 +3,17 @@
  *
  * Drag-and-drop / file-picker modal for importing INTRACOMP Excel files.
  * Shows a parse preview (row counts + any warnings) before the user confirms.
+ *
+ * Imports are additive: each file becomes its own removable batch, so you can
+ * bring in several countries' mapping files one after another and compare
+ * them together (on the map, in analytics, etc.) instead of the latest
+ * import wiping out everything before it.
  */
 
 import { useRef, useState, useCallback } from 'react'
 import { createPortal } from 'react-dom'
-import { Upload, FileSpreadsheet, X, AlertTriangle, CheckCircle2, Loader2 } from 'lucide-react'
-import { parseExcelFile, mergeEntities, type ParseResult } from '@/utils/excelParser'
+import { Upload, FileSpreadsheet, X, AlertTriangle, CheckCircle2, Loader2, Trash2 } from 'lucide-react'
+import { parseExcelFile, type ParseResult } from '@/utils/excelParser'
 import { useDataContext } from '@/context/DataContext'
 
 // ─── Props ─────────────────────────────────────────────────────────────────────
@@ -28,7 +33,7 @@ type Step =
 // ─── Component ─────────────────────────────────────────────────────────────────
 
 export function ImportModal({ onClose }: ImportModalProps) {
-  const { setEntities, isImported } = useDataContext()
+  const { imports, addImport, removeImport, clearAll } = useDataContext()
   const [step, setStep] = useState<Step>({ type: 'idle' })
   const [dragging, setDragging] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
@@ -90,8 +95,8 @@ export function ImportModal({ onClose }: ImportModalProps) {
 
   const confirmImport = () => {
     if (step.type !== 'preview') return
-    setEntities(mergeEntities(step.result))
-    onClose()
+    addImport(step.result, step.fileName)
+    setStep({ type: 'idle' })
   }
 
   // ── Render ───────────────────────────────────────────────────────────────────
@@ -119,11 +124,45 @@ export function ImportModal({ onClose }: ImportModalProps) {
         {/* Body */}
         <div className="cl-modal-body">
 
-          {/* Active data badge */}
-          {isImported && step.type === 'idle' && (
-            <div className="cl-import-badge cl-import-badge--active">
-              <CheckCircle2 size={14} />
-              <span>Data is loaded. Import a new file to replace it.</span>
+          {/* Loaded imports — shown whenever there's data, regardless of step */}
+          {imports.length > 0 && (step.type === 'idle' || step.type === 'error') && (
+            <div className="cl-loaded-imports">
+              <div className="cl-loaded-imports__header">
+                <span>
+                  {imports.length} file{imports.length !== 1 ? 's' : ''} loaded
+                </span>
+                <button
+                  type="button"
+                  className="cl-loaded-imports__clear"
+                  onClick={clearAll}
+                >
+                  Clear all
+                </button>
+              </div>
+              <ul className="cl-loaded-imports__list" role="list">
+                {imports.map((batch) => (
+                  <li key={batch.id} className="cl-loaded-imports__row">
+                    <div className="cl-loaded-imports__info">
+                      <span className="cl-loaded-imports__country">
+                        {batch.country || batch.fileName}
+                      </span>
+                      <span className="cl-loaded-imports__meta">
+                        {batch.stakeholderCount} stakeholders · {batch.instrumentCount} instruments
+                        {batch.partner ? ` · ${batch.partner}` : ''}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      className="cl-loaded-imports__remove"
+                      onClick={() => removeImport(batch.id)}
+                      aria-label={`Remove ${batch.country || batch.fileName}`}
+                      title="Remove this file's data"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
 
@@ -140,7 +179,11 @@ export function ImportModal({ onClose }: ImportModalProps) {
               onKeyDown={(e) => e.key === 'Enter' && fileRef.current?.click()}
             >
               <Upload size={28} className="cl-drop-icon" />
-              <p className="cl-drop-primary">Drag & drop your Excel file here</p>
+              <p className="cl-drop-primary">
+                {imports.length > 0
+                  ? 'Drag & drop another Excel file here'
+                  : 'Drag & drop your Excel file here'}
+              </p>
               <p className="cl-drop-secondary">or click to browse .xlsx / .xls</p>
               <input
                 ref={fileRef}
@@ -175,7 +218,10 @@ export function ImportModal({ onClose }: ImportModalProps) {
                 <CheckCircle2 size={16} className="cl-preview-check" />
                 <div>
                   <div className="cl-preview-filename">{step.fileName}</div>
-                  <div className="cl-preview-sub">Ready to import</div>
+                  <div className="cl-preview-sub">
+                    {step.result.meta.country ? `${step.result.meta.country} · ` : ''}
+                    Ready to add
+                  </div>
                 </div>
               </div>
 
@@ -209,7 +255,7 @@ export function ImportModal({ onClose }: ImportModalProps) {
                   Cancel
                 </button>
                 <button className="cl-btn cl-btn--primary" onClick={confirmImport}>
-                  Import data
+                  {imports.length > 0 ? 'Add to loaded data' : 'Import data'}
                 </button>
               </div>
             </div>
@@ -219,7 +265,9 @@ export function ImportModal({ onClose }: ImportModalProps) {
         {/* Format hint */}
         {step.type !== 'preview' && step.type !== 'parsing' && (
           <div className="cl-modal-footer">
-            Expected format: INTRACOMP Policy Mapping Template (.xlsx) with <em>Stakeholders</em> and <em>Instruments</em> sheets. Metadata rows at the top (Partner, Date, Country) are read automatically.
+            Expected format: INTRACOMP Policy Mapping Template (.xlsx) with <em>Stakeholders</em> and <em>Instruments</em> sheets.
+            Metadata rows at the top (Partner, Date, Country) are read automatically. Each file you import is added
+            alongside what's already loaded — remove a file above to drop just that country's data.
           </div>
         )}
       </div>
