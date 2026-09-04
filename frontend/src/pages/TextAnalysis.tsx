@@ -63,10 +63,14 @@ function buildFrequency(country: string, allEntities: Entity[]): Map<string, num
 interface FreqWord {
   text: string
   count: number
-  size?: number
-  x?: number
-  y?: number
-  rotate?: number
+}
+
+interface PlacedWord {
+  text: string
+  x: number
+  y: number
+  rotate: number
+  size: number
 }
 
 const MAX_WORDS_PER_CLOUD = 60
@@ -79,10 +83,25 @@ function buildFreqWords(country: string, allEntities: Entity[]): FreqWord[] {
     .slice(0, MAX_WORDS_PER_CLOUD)
 }
 
+/** Deterministic rotation so the same word always gets the same angle. */
+function rotationFor(text: string): number {
+  let hash = 0
+  for (let i = 0; i < text.length; i++) hash = (hash * 31 + text.charCodeAt(i)) & 0xffff
+  const choices = [0, 0, 0, 0, 90, -90]
+  return choices[hash % choices.length]
+}
+
+/**
+ * Pure rendering component — takes pre-computed placed words from the joint
+ * layout and renders only those that belong to this country's word set.
+ * Because both clouds share the same layout, identical words land in the
+ * same (x, y) position in both panes.
+ */
 function WordCloud({
-  words, width, height, color, maxCount,
+  words, placedWords, width, height, color, maxCount,
 }: {
   words: FreqWord[]
+  placedWords: PlacedWord[]
   width: number
   height: number
   color: string
@@ -90,39 +109,37 @@ function WordCloud({
 }) {
   const svgRef = useRef<SVGSVGElement>(null)
 
+  const wordMap = useMemo(() => new Map(words.map(w => [w.text, w.count])), [words])
+
   useEffect(() => {
-    if (!svgRef.current || words.length === 0 || width <= 0 || height <= 0) return
-    const sizeScale = scaleSqrt().domain([0, maxCount]).range([10, Math.min(width, height) * 0.16]).clamp(true)
+    if (!svgRef.current || placedWords.length === 0 || width <= 0 || height <= 0) return
 
-    const layout = cloud()
-      .size([width, height])
-      .words(words.map(w => ({ ...w, size: sizeScale(w.count) })))
-      .padding(3)
-      .rotate(() => (Math.random() > 0.75 ? (Math.random() > 0.5 ? 90 : -90) : 0))
-      .font('sans-serif')
-      .fontSize((d: { size?: number }) => d.size ?? 12)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .on('end', (placed: any[]) => {
-        if (!svgRef.current) return
-        const svg = d3.select(svgRef.current)
-        svg.selectAll('*').remove()
-        const g = svg.append('g').attr('transform', `translate(${width / 2},${height / 2})`)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const nodes = (g as any).selectAll('text').data(placed as FreqWord[]).enter().append('text')
-        nodes.style('font-family', 'sans-serif')
-        nodes.style('font-weight', (d: FreqWord) => (d.count > maxCount * 0.3 ? '700' : '500'))
-        nodes.style('fill', color)
-        nodes.style('cursor', 'default')
-        nodes.attr('text-anchor', 'middle')
-        nodes.attr('font-size', (d: FreqWord) => String(d.size ?? 12) + 'px')
-        nodes.attr('transform', (d: FreqWord) => 'translate(' + String(d.x) + ',' + String(d.y) + ') rotate(' + String(d.rotate) + ')')
-        nodes.text((d: FreqWord) => d.text ?? '')
-        nodes.append('title').text((d: FreqWord) => '"' + d.text + '" - ' + String(d.count) + ' occurrence' + (d.count === 1 ? '' : 's'))
-      })
+    const toRender = placedWords.filter(p => wordMap.has(p.text))
 
-    layout.start()
-    return () => { layout.stop() }
-  }, [words, width, height, color, maxCount])
+    const svg = d3.select(svgRef.current)
+    svg.selectAll('*').remove()
+    const g = svg.append('g').attr('transform', `translate(${width / 2},${height / 2})`)
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const nodes = (g as any).selectAll('text').data(toRender).enter().append('text')
+    nodes.style('font-family', 'sans-serif')
+    nodes.style('font-weight', (d: PlacedWord) => {
+      const count = wordMap.get(d.text) ?? 0
+      return count > maxCount * 0.3 ? '700' : '500'
+    })
+    nodes.style('fill', color)
+    nodes.style('cursor', 'default')
+    nodes.attr('text-anchor', 'middle')
+    nodes.attr('font-size', (d: PlacedWord) => String(d.size) + 'px')
+    nodes.attr('transform', (d: PlacedWord) =>
+      'translate(' + String(d.x) + ',' + String(d.y) + ') rotate(' + String(d.rotate) + ')'
+    )
+    nodes.text((d: PlacedWord) => d.text)
+    nodes.append('title').text((d: PlacedWord) => {
+      const count = wordMap.get(d.text) ?? 0
+      return '"' + d.text + '" - ' + String(count) + ' occurrence' + (count === 1 ? '' : 's')
+    })
+  }, [placedWords, wordMap, width, height, color, maxCount])
 
   return <svg ref={svgRef} width={width} height={height} />
 }
@@ -166,6 +183,58 @@ export function TextAnalysis() {
     () => Math.max(1, ...wordsA.map(w => w.count), ...wordsB.map(w => w.count)),
     [wordsA, wordsB],
   )
+
+  /**
+   * Joint layout: merge both word lists and run d3-cloud once.
+   * Words shared between the two countries get the same (x, y, rotate),
+   * so they appear in the same position in both panes.
+   */
+  const [placedWords, setPlacedWords] = useState<PlacedWord[]>([])
+
+  useEffect(() => {
+    if (!ready || (wordsA.length === 0 && wordsB.length === 0) || paneWidth <= 0 || paneHeight <= 0) {
+      setPlacedWords([])
+      return
+    }
+
+    // Merge: for sizing use the max count of either country so scale is consistent
+    const merged = new Map<string, number>()
+    for (const w of wordsA) merged.set(w.text, Math.max(merged.get(w.text) ?? 0, w.count))
+    for (const w of wordsB) merged.set(w.text, Math.max(merged.get(w.text) ?? 0, w.count))
+
+    const sizeScale = scaleSqrt()
+      .domain([0, maxCount])
+      .range([10, Math.min(paneWidth, paneHeight) * 0.16])
+      .clamp(true)
+
+    const wordList = [...merged.entries()].map(([text, count]) => ({
+      text,
+      count,
+      size: sizeScale(count),
+    }))
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const layout = cloud<any>()
+      .size([paneWidth, paneHeight])
+      .words(wordList)
+      .padding(3)
+      .rotate((d: { text?: string }) => rotationFor(d.text ?? ''))
+      .font('sans-serif')
+      .fontSize((d: { size?: number }) => d.size ?? 12)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .on('end', (placed: any[]) => {
+        setPlacedWords(placed.map(w => ({
+          text: w.text as string,
+          x: (w.x as number) ?? 0,
+          y: (w.y as number) ?? 0,
+          rotate: (w.rotate as number) ?? 0,
+          size: (w.size as number) ?? 12,
+        })))
+      })
+
+    layout.start()
+    return () => { layout.stop() }
+  }, [ready, wordsA, wordsB, maxCount, paneWidth, paneHeight])
 
   const entityCountA = useMemo(
     () => countryA ? filterEntities(entities, { ...DEFAULT_FILTERS, countries: [countryA] }).length : 0,
@@ -240,7 +309,7 @@ export function TextAnalysis() {
               <div className="cl-ta-cloud-container">
                 {wordsA.length === 0
                   ? <div className="cl-chart-empty">Not enough text data for {countryA}.</div>
-                  : <WordCloud words={wordsA} width={paneWidth} height={paneHeight} color={COLOR_A} maxCount={maxCount} />
+                  : <WordCloud words={wordsA} placedWords={placedWords} width={paneWidth} height={paneHeight} color={COLOR_A} maxCount={maxCount} />
                 }
               </div>
             </div>
@@ -250,7 +319,7 @@ export function TextAnalysis() {
               <div className="cl-ta-cloud-container">
                 {wordsB.length === 0
                   ? <div className="cl-chart-empty">Not enough text data for {countryB}.</div>
-                  : <WordCloud words={wordsB} width={paneWidth} height={paneHeight} color={COLOR_B} maxCount={maxCount} />
+                  : <WordCloud words={wordsB} placedWords={placedWords} width={paneWidth} height={paneHeight} color={COLOR_B} maxCount={maxCount} />
                 }
               </div>
             </div>
