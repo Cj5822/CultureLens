@@ -67,6 +67,22 @@ function normalise(s: unknown): string {
   return String(s ?? '').toLowerCase().trim().replace(/\s+/g, ' ');
 }
 
+/**
+ * Splits a "Connections" cell into individual raw references.
+ *
+ * Real stakeholder/instrument names frequently contain commas themselves
+ * ("Ministry of Education, Science and Technological Development"), so
+ * comma-splitting alone corrupts any connection that names such an entity.
+ * Semicolons are the documented separator for this column, so when the
+ * cell contains at least one semicolon we split on semicolons only;
+ * commas are used as a fallback for older files authored before that
+ * convention, where entries are less likely to contain internal commas.
+ */
+function splitConnections(raw: string): string[] {
+  const separator = raw.includes(';') ? /;/ : /,/;
+  return raw.split(separator).map((s) => s.trim()).filter(Boolean);
+}
+
 function coerceEnum<T extends string>(
   raw: unknown,
   valid: readonly T[],
@@ -236,7 +252,7 @@ function parseStakeholderRow(
       'Connections',
     ) ?? '',
   );
-  const connections = connectionsRaw.split(/[;,]/).map((s) => s.trim()).filter(Boolean);
+  const connections = splitConnections(connectionsRaw);
 
   // col N: "Intended audience" - users often put next-steps here instead
   const rawN = getCell('Intended audience and/or beneficiaries of policy stakeholder?', 'Intended audience');
@@ -352,7 +368,7 @@ function parseInstrumentRow(
       'Connections',
     ) ?? '',
   );
-  const connections = connectionsRaw.split(/[;,]/).map((s) => s.trim()).filter(Boolean);
+  const connections = splitConnections(connectionsRaw);
 
   const itcApproach = String(
     getCell(

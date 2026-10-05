@@ -12,6 +12,15 @@
  *
  * FilterContext reads the flattened `entities` array from here, so adding or
  * removing an import batch causes every view to re-render automatically.
+ *
+ * The flattened array also runs through `resolveConnections` before it's
+ * exposed: the source Excel's "Connections" column is filled in by hand
+ * before any entity ID exists, so it almost always contains entity *names*
+ * rather than the generated IDs the graph/detail views match against. This
+ * step resolves those names to real IDs (across every currently-loaded
+ * batch, not just the one that named them) so the network graph and the
+ * detail panel's connection list actually show the relationships that were
+ * recorded, instead of rendering isolated nodes. See resolveConnections.ts.
  */
 
 import {
@@ -24,6 +33,7 @@ import {
 import type { Entity } from '@/types/entities';
 import type { ParseResult } from '@/utils/excelParser';
 import { mergeEntities } from '@/utils/excelParser';
+import { resolveConnections } from '@/utils/resolveConnections';
 
 // ─── Import batch ──────────────────────────────────────────────────────────────
 
@@ -44,7 +54,8 @@ export interface ImportBatch {
 // ─── Context value ─────────────────────────────────────────────────────────────
 
 export interface DataContextValue {
-  /** All entities across every currently loaded import, flattened. */
+  /** All entities across every currently loaded import, flattened, with
+   *  `connections` resolved to real IDs wherever a match could be found. */
   entities: Entity[];
   /** One entry per imported file, in import order. */
   imports: ImportBatch[];
@@ -74,7 +85,7 @@ export function DataContextProvider({ children }: { children: ReactNode }) {
   const [imports, setImports] = useState<ImportBatch[]>([]);
 
   const entities = useMemo(
-    () => imports.flatMap((batch) => batch.entities),
+    () => resolveConnections(imports.flatMap((batch) => batch.entities)),
     [imports],
   );
 
