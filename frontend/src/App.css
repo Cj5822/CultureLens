@@ -3154,3 +3154,22 @@ body:has(.cl-cel-panel--open) .cl-detail-panel--open {
 .leaflet-tile-container img {
   max-width: none !important;
 }
+
+/* ── Multi-file import preview ─────────────────────────── */
+.cl-preview-fail {
+  color: oklch(0.55 0.18 27);
+  flex-shrink: 0;
+}
+
+.cl-preview-file--error .cl-loaded-imports__country {
+  color: oklch(0.45 0.18 27);
+}
+
+.cl-preview-file--error .cl-loaded-imports__meta {
+  color: oklch(0.50 0.14 27);
+}
+
+.cl-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

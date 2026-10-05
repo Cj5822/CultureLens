@@ -2,12 +2,14 @@
  * ImportModal.tsx
  *
  * Drag-and-drop / file-picker modal for importing INTRACOMP Excel files.
- * Shows a parse preview (row counts + any warnings) before the user confirms.
+ * Multiple files can be selected (or dropped) at once. Every file is parsed,
+ * then a combined preview is shown (per-file row counts, totals and any
+ * warnings/errors) before the user confirms.
  *
  * Imports are additive: each file becomes its own removable batch, so you can
- * bring in several countries' mapping files one after another and compare
- * them together (on the map, in analytics, etc.) instead of the latest
- * import wiping out everything before it.
+ * bring in several countries' mapping files together and compare them (on the
+ * map, in analytics, etc.) instead of the latest import wiping out everything
+ * before it.
  */
 
 import { useRef, useState, useCallback } from 'react'
@@ -24,11 +26,43 @@ interface ImportModalProps {
 
 // ─── Internal state machine ────────────────────────────────────────────────────
 
+type ParsedFile =
+  | { key: string; fileName: string; ok: true; result: ParseResult }
+  | { key: string; fileName: string; ok: false; message: string }
+
 type Step =
   | { type: 'idle' }
-  | { type: 'parsing' }
-  | { type: 'preview'; fileName: string; result: ParseResult }
+  | { type: 'parsing'; done: number; total: number }
+  | { type: 'preview'; files: ParsedFile[] }
   | { type: 'error'; message: string }
+
+const EXCEL_RE = /\.(xlsx|xls)$/i
+
+async function parseOne(file: File, key: string): Promise<ParsedFile> {
+  if (!EXCEL_RE.test(file.name)) {
+    return { key, fileName: file.name, ok: false, message: 'Not an Excel file (.xlsx or .xls).' }
+  }
+  try {
+    const buffer = await file.arrayBuffer()
+    const result = parseExcelFile(buffer)
+    if (result.stakeholders.length === 0 && result.instruments.length === 0) {
+      return {
+        key,
+        fileName: file.name,
+        ok: false,
+        message: 'No data rows found. Needs "Stakeholders" and "Instruments" sheets with a header row.',
+      }
+    }
+    return { key, fileName: file.name, ok: true, result }
+  } catch (err) {
+    return {
+      key,
+      fileName: file.name,
+      ok: false,
+      message: err instanceof Error ? err.message : 'Failed to parse the file.',
+    }
+  }
+}
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 
@@ -40,34 +74,23 @@ export function ImportModal({ onClose }: ImportModalProps) {
 
   // ── File processing ──────────────────────────────────────────────────────────
 
-  const processFile = useCallback(async (file: File) => {
-    if (!file.name.match(/\.(xlsx|xls)$/i)) {
-      setStep({ type: 'error', message: 'Please upload an Excel file (.xlsx or .xls).' })
+  const processFiles = useCallback(async (fileList: File[]) => {
+    if (fileList.length === 0) return
+
+    if (!fileList.some((f) => EXCEL_RE.test(f.name))) {
+      setStep({ type: 'error', message: 'Please upload Excel files (.xlsx or .xls).' })
       return
     }
 
-    setStep({ type: 'parsing' })
+    setStep({ type: 'parsing', done: 0, total: fileList.length })
 
-    try {
-      const buffer = await file.arrayBuffer()
-      const result = parseExcelFile(buffer)
-
-      if (result.stakeholders.length === 0 && result.instruments.length === 0) {
-        setStep({
-          type: 'error',
-          message:
-            'No data rows found. Make sure the file has "Stakeholders" and "Instruments" sheets with a header row.',
-        })
-        return
-      }
-
-      setStep({ type: 'preview', fileName: file.name, result })
-    } catch (err) {
-      setStep({
-        type: 'error',
-        message: err instanceof Error ? err.message : 'Failed to parse the file.',
-      })
+    const parsed: ParsedFile[] = []
+    for (let i = 0; i < fileList.length; i++) {
+      parsed.push(await parseOne(fileList[i], `${i}-${fileList[i].name}`))
+      setStep({ type: 'parsing', done: i + 1, total: fileList.length })
     }
+
+    setStep({ type: 'preview', files: parsed })
   }, [])
 
   // ── Drag-and-drop handlers ───────────────────────────────────────────────────
@@ -76,28 +99,48 @@ export function ImportModal({ onClose }: ImportModalProps) {
     (e: React.DragEvent) => {
       e.preventDefault()
       setDragging(false)
-      const file = e.dataTransfer.files[0]
-      if (file) processFile(file)
+      processFiles(Array.from(e.dataTransfer.files))
     },
-    [processFile],
+    [processFiles],
   )
 
   const onDragOver = (e: React.DragEvent) => { e.preventDefault(); setDragging(true) }
   const onDragLeave = () => setDragging(false)
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) processFile(file)
+    const files = Array.from(e.target.files ?? [])
     e.target.value = ''
+    processFiles(files)
+  }
+
+  // ── Preview helpers ──────────────────────────────────────────────────────────
+
+  const dropFromPreview = (key: string) => {
+    if (step.type !== 'preview') return
+    const files = step.files.filter((f) => f.key !== key)
+    setStep(files.length > 0 ? { type: 'preview', files } : { type: 'idle' })
   }
 
   // ── Confirm import ───────────────────────────────────────────────────────────
 
   const confirmImport = () => {
     if (step.type !== 'preview') return
-    addImport(step.result, step.fileName)
+    for (const f of step.files) {
+      if (f.ok) addImport(f.result, f.fileName)
+    }
     setStep({ type: 'idle' })
   }
+
+  // ── Derived preview data ─────────────────────────────────────────────────────
+
+  const okFiles = step.type === 'preview' ? step.files.filter((f): f is Extract<ParsedFile, { ok: true }> => f.ok) : []
+  const failedCount = step.type === 'preview' ? step.files.length - okFiles.length : 0
+  const totalStakeholders = okFiles.reduce((n, f) => n + f.result.stakeholders.length, 0)
+  const totalInstruments = okFiles.reduce((n, f) => n + f.result.instruments.length, 0)
+  const allWarnings = okFiles.flatMap((f) =>
+    f.result.warnings.map((w) => (okFiles.length > 1 ? `${f.fileName}: ${w}` : w)),
+  )
+  const loadedNames = new Set(imports.map((b) => b.fileName))
 
   // ── Render ───────────────────────────────────────────────────────────────────
 
@@ -181,14 +224,17 @@ export function ImportModal({ onClose }: ImportModalProps) {
               <Upload size={28} className="cl-drop-icon" />
               <p className="cl-drop-primary">
                 {imports.length > 0
-                  ? 'Drag & drop another Excel file here'
-                  : 'Drag & drop your Excel file here'}
+                  ? 'Drag & drop more Excel files here'
+                  : 'Drag & drop your Excel files here'}
               </p>
-              <p className="cl-drop-secondary">or click to browse .xlsx / .xls</p>
+              <p className="cl-drop-secondary">
+                or click to browse .xlsx / .xls — select as many files as you like
+              </p>
               <input
                 ref={fileRef}
                 type="file"
                 accept=".xlsx,.xls"
+                multiple
                 style={{ display: 'none' }}
                 onChange={onFileChange}
               />
@@ -207,7 +253,11 @@ export function ImportModal({ onClose }: ImportModalProps) {
           {step.type === 'parsing' && (
             <div className="cl-import-parsing">
               <Loader2 size={24} className="cl-spin" />
-              <span>Parsing file…</span>
+              <span>
+                {step.total > 1
+                  ? `Parsing files… (${step.done}/${step.total})`
+                  : 'Parsing file…'}
+              </span>
             </div>
           )}
 
@@ -215,35 +265,93 @@ export function ImportModal({ onClose }: ImportModalProps) {
           {step.type === 'preview' && (
             <div className="cl-preview">
               <div className="cl-preview-header">
-                <CheckCircle2 size={16} className="cl-preview-check" />
+                {okFiles.length > 0 ? (
+                  <CheckCircle2 size={16} className="cl-preview-check" />
+                ) : (
+                  <AlertTriangle size={16} className="cl-preview-fail" />
+                )}
                 <div>
-                  <div className="cl-preview-filename">{step.fileName}</div>
+                  <div className="cl-preview-filename">
+                    {okFiles.length === 1 && step.files.length === 1
+                      ? okFiles[0].fileName
+                      : `${okFiles.length} file${okFiles.length !== 1 ? 's' : ''} ready to add`}
+                  </div>
                   <div className="cl-preview-sub">
-                    {step.result.meta.country ? `${step.result.meta.country} · ` : ''}
-                    Ready to add
+                    {okFiles.length === 1 && step.files.length === 1
+                      ? `${okFiles[0].result.meta.country ? `${okFiles[0].result.meta.country} · ` : ''}Ready to add`
+                      : failedCount > 0
+                        ? `${failedCount} file${failedCount !== 1 ? 's' : ''} couldn't be read and will be skipped`
+                        : 'All files parsed successfully'}
                   </div>
                 </div>
               </div>
 
-              <div className="cl-preview-counts">
-                <div className="cl-preview-count-card">
-                  <span className="cl-preview-count-num">{step.result.stakeholders.length}</span>
-                  <span className="cl-preview-count-label">Stakeholders</span>
+              {okFiles.length > 0 && (
+                <div className="cl-preview-counts">
+                  <div className="cl-preview-count-card">
+                    <span className="cl-preview-count-num">{totalStakeholders}</span>
+                    <span className="cl-preview-count-label">Stakeholders</span>
+                  </div>
+                  <div className="cl-preview-count-card">
+                    <span className="cl-preview-count-num">{totalInstruments}</span>
+                    <span className="cl-preview-count-label">Instruments</span>
+                  </div>
                 </div>
-                <div className="cl-preview-count-card">
-                  <span className="cl-preview-count-num">{step.result.instruments.length}</span>
-                  <span className="cl-preview-count-label">Instruments</span>
-                </div>
-              </div>
+              )}
 
-              {step.result.warnings.length > 0 && (
+              {/* Per-file breakdown (only when more than one file was chosen) */}
+              {step.files.length > 1 && (
+                <div className="cl-loaded-imports">
+                  <ul className="cl-loaded-imports__list" role="list">
+                    {step.files.map((f) => (
+                      <li
+                        key={f.key}
+                        className={`cl-loaded-imports__row ${f.ok ? '' : 'cl-preview-file--error'}`}
+                      >
+                        <div className="cl-loaded-imports__info">
+                          <span className="cl-loaded-imports__country" title={f.fileName}>
+                            {f.ok && f.result.meta.country
+                              ? `${f.result.meta.country} — ${f.fileName}`
+                              : f.fileName}
+                          </span>
+                          <span className="cl-loaded-imports__meta">
+                            {f.ok
+                              ? `${f.result.stakeholders.length} stakeholders · ${f.result.instruments.length} instruments` +
+                                (loadedNames.has(f.fileName) ? ' · already loaded' : '')
+                              : f.message}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          className="cl-loaded-imports__remove"
+                          onClick={() => dropFromPreview(f.key)}
+                          aria-label={`Don't import ${f.fileName}`}
+                          title="Leave this file out"
+                        >
+                          <X size={14} />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Single failed file: show its reason */}
+              {step.files.length === 1 && !step.files[0].ok && (
+                <div className="cl-import-badge cl-import-badge--error">
+                  <AlertTriangle size={14} />
+                  <span>{step.files[0].fileName}: {step.files[0].message}</span>
+                </div>
+              )}
+
+              {allWarnings.length > 0 && (
                 <details className="cl-preview-warnings">
                   <summary>
                     <AlertTriangle size={13} />
-                    {step.result.warnings.length} warning{step.result.warnings.length !== 1 ? 's' : ''}
+                    {allWarnings.length} warning{allWarnings.length !== 1 ? 's' : ''}
                   </summary>
                   <ul>
-                    {step.result.warnings.map((w, i) => (
+                    {allWarnings.map((w, i) => (
                       <li key={i}>{w}</li>
                     ))}
                   </ul>
@@ -254,8 +362,16 @@ export function ImportModal({ onClose }: ImportModalProps) {
                 <button className="cl-btn cl-btn--ghost" onClick={() => setStep({ type: 'idle' })}>
                   Cancel
                 </button>
-                <button className="cl-btn cl-btn--primary" onClick={confirmImport}>
-                  {imports.length > 0 ? 'Add to loaded data' : 'Import data'}
+                <button
+                  className="cl-btn cl-btn--primary"
+                  onClick={confirmImport}
+                  disabled={okFiles.length === 0}
+                >
+                  {okFiles.length > 1
+                    ? `Import ${okFiles.length} files`
+                    : imports.length > 0
+                      ? 'Add to loaded data'
+                      : 'Import data'}
                 </button>
               </div>
             </div>
@@ -266,8 +382,8 @@ export function ImportModal({ onClose }: ImportModalProps) {
         {step.type !== 'preview' && step.type !== 'parsing' && (
           <div className="cl-modal-footer">
             Expected format: INTRACOMP Policy Mapping Template (.xlsx) with <em>Stakeholders</em> and <em>Instruments</em> sheets.
-            Metadata rows at the top (Partner, Date, Country) are read automatically. Each file you import is added
-            alongside what's already loaded — remove a file above to drop just that country's data.
+            Metadata rows at the top (Partner, Date, Country) are read automatically. You can select several files at
+            once (Ctrl/Shift-click) — each is added alongside what's already loaded, and can be removed individually above.
           </div>
         )}
       </div>
