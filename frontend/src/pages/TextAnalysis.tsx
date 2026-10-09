@@ -167,8 +167,13 @@ export function TextAnalysis() {
     return () => ro.disconnect()
   }, [])
 
-  const paneWidth  = Math.max(0, Math.floor((rowSize.width - 1) / 2))
-  const paneHeight = rowSize.height
+  // Cap each cloud's width so the two clouds sit close together around the
+  // divider instead of drifting to opposite edges on wide screens.
+  const MAX_CLOUD_WIDTH = 520
+  const LABEL_HEIGHT = 32
+  const GAP = 24
+  const paneWidth  = Math.max(0, Math.min(MAX_CLOUD_WIDTH, Math.floor((rowSize.width - 1 - GAP) / 2)))
+  const paneHeight = Math.max(0, rowSize.height - LABEL_HEIGHT)
   const ready = Boolean(countryA && countryB && countryA !== countryB)
 
   const wordsA = useMemo(
@@ -304,7 +309,7 @@ export function TextAnalysis() {
       {ready && (
         <div className="cl-chart-card cl-ta-main-card">
           <div ref={cloudRowRef} className="cl-ta-clouds-row">
-            <div className="cl-ta-cloud-col">
+            <div className="cl-ta-cloud-col" style={{ width: paneWidth }}>
               <div className="cl-ta-cloud-col__label" style={{ color: COLOR_A }}>{countryA}</div>
               <div className="cl-ta-cloud-container">
                 {wordsA.length === 0
@@ -314,7 +319,7 @@ export function TextAnalysis() {
               </div>
             </div>
             <div className="cl-ta-clouds-divider" />
-            <div className="cl-ta-cloud-col">
+            <div className="cl-ta-cloud-col" style={{ width: paneWidth }}>
               <div className="cl-ta-cloud-col__label" style={{ color: COLOR_B }}>{countryB}</div>
               <div className="cl-ta-cloud-container">
                 {wordsB.length === 0
