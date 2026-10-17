@@ -4,66 +4,11 @@ import { scaleSqrt } from 'd3-scale'
 import cloud from 'd3-cloud'
 import { useDataContext } from '@/context/DataContext'
 import { filterEntities } from '@/utils/filterEntities'
-import type { EntityFilters } from '@/types/filters'
 import { DEFAULT_FILTERS } from '@/types/filters'
-import type { Entity } from '@/types/entities'
-
-const STOP_WORDS = new Set([
-  'a','about','above','after','again','against','all','also','an','and','any','are',
-  'as','at','be','been','being','between','both','but','by','can','d','did','do',
-  'does','doing','down','during','each','few','for','from','further','get','gets',
-  'got','had','has','have','having','he','her','here','hers','herself','him',
-  'himself','his','how','i','if','in','into','is','it','its','itself','just',
-  'me','more','most','my','myself','no','nor','not','now','of','off','on','once',
-  'only','or','other','our','ours','ourselves','out','over','own','s','same','she',
-  'should','so','some','such','t','than','that','the','their','theirs','them',
-  'themselves','then','there','these','they','this','those','through','to','too',
-  'under','until','up','very','was','we','were','what','when','where','which',
-  'while','who','whom','why','will','with','would','you','your','yours','yourself',
-  'yourselves','been','has','have','may','might','shall','could','would','should',
-  'must','within','across','including','without','between','towards','among',
-  'upon','via','per','etc','eg','ie',
-])
+import { buildFreqWords, type FreqWord } from '@/utils/textFrequency'
 
 const COLOR_A = '#2563eb'
 const COLOR_B = '#ea580c'
-
-const TEXT_FIELDS = [
-  'description', 'itcApproach', 'relationToITC', 'mainObjectives',
-  'additionalRemarks', 'equityAddressed', 'relevanceToINTRACOMP',
-  'functionalRole',
-] as const
-
-function extractWords(text: string): string[] {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z\s'-]/g, ' ')
-    .split(/\s+/)
-    .map(w => w.replace(/^['-]+|['-]+$/g, ''))
-    .filter(w => w.length > 2 && !STOP_WORDS.has(w))
-}
-
-function buildFrequency(country: string, allEntities: Entity[]): Map<string, number> {
-  const filters: EntityFilters = { ...DEFAULT_FILTERS, countries: [country] }
-  const entities = filterEntities(allEntities, filters)
-  const freq = new Map<string, number>()
-  for (const e of entities) {
-    for (const field of TEXT_FIELDS) {
-      const val = (e as unknown as Record<string, unknown>)[field]
-      if (typeof val === 'string' && val) {
-        for (const word of extractWords(val)) {
-          freq.set(word, (freq.get(word) ?? 0) + 1)
-        }
-      }
-    }
-  }
-  return freq
-}
-
-interface FreqWord {
-  text: string
-  count: number
-}
 
 interface PlacedWord {
   text: string
@@ -71,16 +16,6 @@ interface PlacedWord {
   y: number
   rotate: number
   size: number
-}
-
-const MAX_WORDS_PER_CLOUD = 60
-
-function buildFreqWords(country: string, allEntities: Entity[]): FreqWord[] {
-  const freq = buildFrequency(country, allEntities)
-  return [...freq.entries()]
-    .map(([text, count]) => ({ text, count }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, MAX_WORDS_PER_CLOUD)
 }
 
 /** Deterministic rotation so the same word always gets the same angle. */
@@ -98,7 +33,7 @@ function rotationFor(text: string): number {
  * same (x, y) position in both panes.
  */
 function WordCloud({
-  words, placedWords, width, height, color, maxCount,
+  words, placedWords, width, height, color, maxCount, sizeOf,
 }: {
   words: FreqWord[]
   placedWords: PlacedWord[]
@@ -106,6 +41,10 @@ function WordCloud({
   height: number
   color: string
   maxCount: number
+  /** Font size for a given count. Each pane sizes words from its OWN count, so
+   *  a word shared by both countries is drawn at different sizes when its counts
+   *  differ. The joint layout reserves space for the larger size, so nothing overlaps. */
+  sizeOf: (count: number) => number
 }) {
   const svgRef = useRef<SVGSVGElement>(null)
 
@@ -130,7 +69,7 @@ function WordCloud({
     nodes.style('fill', color)
     nodes.style('cursor', 'default')
     nodes.attr('text-anchor', 'middle')
-    nodes.attr('font-size', (d: PlacedWord) => String(d.size) + 'px')
+    nodes.attr('font-size', (d: PlacedWord) => String(sizeOf(wordMap.get(d.text) ?? 0)) + 'px')
     nodes.attr('transform', (d: PlacedWord) =>
       'translate(' + String(d.x) + ',' + String(d.y) + ') rotate(' + String(d.rotate) + ')'
     )
@@ -139,7 +78,7 @@ function WordCloud({
       const count = wordMap.get(d.text) ?? 0
       return '"' + d.text + '" - ' + String(count) + ' occurrence' + (count === 1 ? '' : 's')
     })
-  }, [placedWords, wordMap, width, height, color, maxCount])
+  }, [placedWords, wordMap, width, height, color, maxCount, sizeOf])
 
   return <svg ref={svgRef} width={width} height={height} />
 }
@@ -189,6 +128,15 @@ export function TextAnalysis() {
     [wordsA, wordsB],
   )
 
+  /** Shared square-root size scale (common domain across both countries). */
+  const sizeScale = useMemo(
+    () => scaleSqrt()
+      .domain([0, maxCount])
+      .range([10, Math.max(10, Math.min(paneWidth, paneHeight) * 0.16)])
+      .clamp(true),
+    [maxCount, paneWidth, paneHeight],
+  )
+
   /**
    * Joint layout: merge both word lists and run d3-cloud once.
    * Words shared between the two countries get the same (x, y, rotate),
@@ -206,11 +154,6 @@ export function TextAnalysis() {
     const merged = new Map<string, number>()
     for (const w of wordsA) merged.set(w.text, Math.max(merged.get(w.text) ?? 0, w.count))
     for (const w of wordsB) merged.set(w.text, Math.max(merged.get(w.text) ?? 0, w.count))
-
-    const sizeScale = scaleSqrt()
-      .domain([0, maxCount])
-      .range([10, Math.min(paneWidth, paneHeight) * 0.16])
-      .clamp(true)
 
     const wordList = [...merged.entries()].map(([text, count]) => ({
       text,
@@ -239,7 +182,7 @@ export function TextAnalysis() {
 
     layout.start()
     return () => { layout.stop() }
-  }, [ready, wordsA, wordsB, maxCount, paneWidth, paneHeight])
+  }, [ready, wordsA, wordsB, sizeScale, paneWidth, paneHeight])
 
   const entityCountA = useMemo(
     () => countryA ? filterEntities(entities, { ...DEFAULT_FILTERS, countries: [countryA] }).length : 0,
@@ -314,7 +257,7 @@ export function TextAnalysis() {
               <div className="cl-ta-cloud-container">
                 {wordsA.length === 0
                   ? <div className="cl-chart-empty">Not enough text data for {countryA}.</div>
-                  : <WordCloud words={wordsA} placedWords={placedWords} width={paneWidth} height={paneHeight} color={COLOR_A} maxCount={maxCount} />
+                  : <WordCloud words={wordsA} placedWords={placedWords} width={paneWidth} height={paneHeight} color={COLOR_A} maxCount={maxCount} sizeOf={sizeScale} />
                 }
               </div>
             </div>
@@ -324,7 +267,7 @@ export function TextAnalysis() {
               <div className="cl-ta-cloud-container">
                 {wordsB.length === 0
                   ? <div className="cl-chart-empty">Not enough text data for {countryB}.</div>
-                  : <WordCloud words={wordsB} placedWords={placedWords} width={paneWidth} height={paneHeight} color={COLOR_B} maxCount={maxCount} />
+                  : <WordCloud words={wordsB} placedWords={placedWords} width={paneWidth} height={paneHeight} color={COLOR_B} maxCount={maxCount} sizeOf={sizeScale} />
                 }
               </div>
             </div>
