@@ -1,0 +1,159 @@
+{
+  "pair": [
+    "Finland",
+    "Italy"
+  ],
+  "barWords": [
+    "itc",
+    "national",
+    "integration",
+    "curriculum",
+    "formal",
+    "local",
+    "policy",
+    "services",
+    "intercultural",
+    "cultural",
+    "education",
+    "guidance",
+    "instrument",
+    "language",
+    "municipal",
+    "plan",
+    "pupils",
+    "training",
+    "binding",
+    "draft"
+  ],
+  "c1": {
+    "question": "Ignoring 'itc', which word appears most often for Finland?",
+    "answer": "national",
+    "counts": [
+      "national 14",
+      "integration 11",
+      "curriculum 9"
+    ],
+    "flags": []
+  },
+  "c2": {
+    "question": "Is the word 'national' used more often by Finland or by Italy?",
+    "options": [
+      "Finland",
+      "Italy",
+      "About the same"
+    ],
+    "answer": "Finland",
+    "counts": "Finland 14, Italy 9 (36%)",
+    "alternatives": [
+      {
+        "word": "integration",
+        "a": 11,
+        "b": 5,
+        "difference": "55%"
+      },
+      {
+        "word": "curriculum",
+        "a": 9,
+        "b": 2,
+        "difference": "78%"
+      },
+      {
+        "word": "instrument",
+        "a": 2,
+        "b": 4,
+        "difference": "50%"
+      },
+      {
+        "word": "pupils",
+        "a": 2,
+        "b": 4,
+        "difference": "50%"
+      },
+      {
+        "word": "binding",
+        "a": 3,
+        "b": 2,
+        "difference": "33%"
+      }
+    ]
+  },
+  "c3": {
+    "question": "For Italy, which appears more often: 'integration' or 'draft'?",
+    "options": [
+      "integration",
+      "draft",
+      "About the same"
+    ],
+    "answer": "integration",
+    "counts": "integration 5, draft 4 (20%)",
+    "alternatives": [
+      {
+        "x": "integration",
+        "y": "formal",
+        "cx": 5,
+        "cy": 4,
+        "difference": "20%"
+      },
+      {
+        "x": "integration",
+        "y": "instrument",
+        "cx": 5,
+        "cy": 4,
+        "difference": "20%"
+      },
+      {
+        "x": "integration",
+        "y": "local",
+        "cx": 5,
+        "cy": 4,
+        "difference": "20%"
+      },
+      {
+        "x": "integration",
+        "y": "policy",
+        "cx": 5,
+        "cy": 4,
+        "difference": "20%"
+      },
+      {
+        "x": "integration",
+        "y": "pupils",
+        "cx": 5,
+        "cy": 4,
+        "difference": "20%"
+      },
+      {
+        "x": "integration",
+        "y": "services",
+        "cx": 5,
+        "cy": 4,
+        "difference": "20%"
+      },
+      {
+        "x": "plan",
+        "y": "draft",
+        "cx": 5,
+        "cy": 4,
+        "difference": "20%"
+      },
+      {
+        "x": "plan",
+        "y": "formal",
+        "cx": 5,
+        "cy": 4,
+        "difference": "20%"
+      },
+      {
+        "x": "plan",
+        "y": "instrument",
+        "cx": 5,
+        "cy": 4,
+        "difference": "20%"
+      }
+    ]
+  },
+  "tokenisationIssues": {
+    "Finland": [],
+    "Italy": []
+  }
+}

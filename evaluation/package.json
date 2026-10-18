@@ -1,0 +1,22 @@
+{
+  "name": "culturelens-evaluation",
+  "private": true,
+  "type": "module",
+  "description": "Evaluation tooling for the CultureLens final report. Every tool imports the application's own modules from ../frontend/src, so results always reflect the production code.",
+  "scripts": {
+    "robustness": "node run.mjs import-robustness/robustness.ts",
+    "benchmark": "node run.mjs scalability/benchmark.ts",
+    "generate-dataset": "node run.mjs scalability/generate-cli.ts",
+    "answer-key": "node run.mjs user-study/answer-key/answer-key.ts",
+    "stimuli": "node run.mjs user-study/stimuli/stimuli.ts",
+    "analyse": "python3 user-study/analysis/analyse.py",
+    "audit-checks": "node run.mjs design-audit/checks.ts",
+    "resolution": "node run.mjs connection-resolution/score.ts"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.10"
+  },
+  "optionalDependencies": {
+    "@resvg/resvg-js": "^2.6.2"
+  }
+}

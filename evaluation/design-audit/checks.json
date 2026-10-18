@@ -1,0 +1,133 @@
+{
+  "generatedAt": "2026-10-18T00:37:43.896Z",
+  "D2": {
+    "nodesUnderReported": 13,
+    "nodesShowingZero": 1,
+    "examples": [
+      {
+        "name": "Belgrade Open School",
+        "declared": 0,
+        "graph": 1
+      }
+    ]
+  },
+  "D3D4": {
+    "filter": "country = Germany",
+    "filteredEntities": 10,
+    "countriesStillFilledOnMap": 8
+  },
+  "D5": {
+    "entities": 78,
+    "themeGroupTotal": 137,
+    "scopeGroupTotal": 78,
+    "perTheme": [
+      {
+        "theme": "Education",
+        "analytics": 40,
+        "parallelSets": 37
+      },
+      {
+        "theme": "Migration",
+        "analytics": 32,
+        "parallelSets": 21
+      },
+      {
+        "theme": "Inter- and Transcultural Competences",
+        "analytics": 29,
+        "parallelSets": 4
+      },
+      {
+        "theme": "Culture",
+        "analytics": 26,
+        "parallelSets": 10
+      },
+      {
+        "theme": "Other",
+        "analytics": 9,
+        "parallelSets": 5
+      },
+      {
+        "theme": "Inter- and Transculturality",
+        "analytics": 1,
+        "parallelSets": 1
+      }
+    ]
+  },
+  "D6": {
+    "entitiesDrawnOnBelgium": 10
+  },
+  "D8": [
+    {
+      "word": "Māori",
+      "countedAs": [
+        "ori"
+      ],
+      "occurrences": 11,
+      "countries": [
+        "New Zealand"
+      ]
+    },
+    {
+      "word": "Tapasā",
+      "countedAs": [
+        "tapas"
+      ],
+      "occurrences": 4,
+      "countries": [
+        "New Zealand"
+      ]
+    },
+    {
+      "word": "Länder",
+      "countedAs": [
+        "nder"
+      ],
+      "occurrences": 2,
+      "countries": [
+        "Germany"
+      ]
+    },
+    {
+      "word": "cross-Länder",
+      "countedAs": [
+        "cross-l",
+        "nder"
+      ],
+      "occurrences": 1,
+      "countries": [
+        "Germany"
+      ]
+    },
+    {
+      "word": "Öffnung",
+      "countedAs": [
+        "ffnung"
+      ],
+      "occurrences": 1,
+      "countries": [
+        "Germany"
+      ]
+    },
+    {
+      "word": "federal-Länder",
+      "countedAs": [
+        "federal-l",
+        "nder"
+      ],
+      "occurrences": 1,
+      "countries": [
+        "Germany"
+      ]
+    },
+    {
+      "word": "Tapasā's",
+      "countedAs": [
+        "tapas"
+      ],
+      "occurrences": 1,
+      "countries": [
+        "New Zealand"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+node_modules/
+.build/
+# Generated benchmark datasets (recreate with npm run generate-dataset)
+scalability/datasets/
+# Raw survey exports and per-participant marks: never commit
+user-study/analysis/data/
+user-study/analysis/results/marked.csv

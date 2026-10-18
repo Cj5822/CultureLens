@@ -1,0 +1,115 @@
+{
+  "generatedAt": "2026-10-17T14:13:27.062Z",
+  "machine": "2 × Intel(R) Xeon(R) Processor @ 2.10GHz (linux x64), Node v22.22.0",
+  "reps": 7,
+  "filter": {
+    "categories": [],
+    "actorTypes": [],
+    "instrumentTypes": [],
+    "thematicFocus": [
+      "Education",
+      "Migration"
+    ],
+    "geographicalScope": [],
+    "impactInfluence": [
+      "binding",
+      "highly influential"
+    ],
+    "implementationStatus": [],
+    "recommendedNextSteps": [],
+    "countries": [],
+    "search": ""
+  },
+  "rows": [
+    {
+      "entities": 50,
+      "connectedEntities": 18,
+      "references": 34,
+      "edges": 23,
+      "resolutionMs": 0.3097530000000006,
+      "filteringMs": 0.012143999999999266,
+      "graphBuildMs": 0.007562000000000069,
+      "parallelSetsMs": 0.20291600000000187,
+      "wordFrequenciesMs": 0.6819720000000018,
+      "forceTickMs": 0.158079999999984,
+      "forceTicks": 244,
+      "layoutToConvergenceS": 0.0385715199999961,
+      "layoutToConvergenceMeasuredS": 0.04580459400000001
+    },
+    {
+      "entities": 250,
+      "connectedEntities": 88,
+      "references": 155,
+      "edges": 131,
+      "resolutionMs": 2.1404569999999694,
+      "filteringMs": 0.05513699999994515,
+      "graphBuildMs": 0.03458100000000286,
+      "parallelSetsMs": 0.8844020000000228,
+      "wordFrequenciesMs": 2.5577149999999165,
+      "forceTickMs": 0.907140500000196,
+      "forceTicks": 244,
+      "layoutToConvergenceS": 0.22134228200004782,
+      "layoutToConvergenceMeasuredS": 0.23007225100000006
+    },
+    {
+      "entities": 500,
+      "connectedEntities": 171,
+      "references": 345,
+      "edges": 300,
+      "resolutionMs": 7.257551000000149,
+      "filteringMs": 0.01391700000021956,
+      "graphBuildMs": 0.06343199999992066,
+      "parallelSetsMs": 1.0476670000002741,
+      "wordFrequenciesMs": 3.1711410000002616,
+      "forceTickMs": 2.227347000000009,
+      "forceTicks": 244,
+      "layoutToConvergenceS": 0.5434726680000022,
+      "layoutToConvergenceMeasuredS": 0.5469446019999996
+    },
+    {
+      "entities": 1000,
+      "connectedEntities": 379,
+      "references": 768,
+      "edges": 665,
+      "resolutionMs": 28.273323000000346,
+      "filteringMs": 0.030180999999174674,
+      "graphBuildMs": 0.04171000000042113,
+      "parallelSetsMs": 1.1853039999996327,
+      "wordFrequenciesMs": 5.382438999999977,
+      "forceTickMs": 5.758260500000688,
+      "forceTicks": 244,
+      "layoutToConvergenceS": 1.4050155620001679,
+      "layoutToConvergenceMeasuredS": 1.5302851069999996
+    },
+    {
+      "entities": 2500,
+      "connectedEntities": 883,
+      "references": 1735,
+      "edges": 1523,
+      "resolutionMs": 141.33786399999735,
+      "filteringMs": 0.11247999999977765,
+      "graphBuildMs": 0.1389519999975164,
+      "parallelSetsMs": 1.5531319999972766,
+      "wordFrequenciesMs": 11.874449999999342,
+      "forceTickMs": 18.364172999999937,
+      "forceTicks": 244,
+      "layoutToConvergenceS": 4.480858211999984,
+      "layoutToConvergenceMeasuredS": 4.9812896820000025
+    },
+    {
+      "entities": 5000,
+      "connectedEntities": 1807,
+      "references": 3589,
+      "edges": 3127,
+      "resolutionMs": 647.8915430000052,
+      "filteringMs": 0.3146919999999227,
+      "graphBuildMs": 0.8573639999958687,
+      "parallelSetsMs": 3.9687450000055833,
+      "wordFrequenciesMs": 24.856413999994402,
+      "forceTickMs": 44.0584730000046,
+      "forceTicks": 244,
+      "layoutToConvergenceS": 10.750267412001122,
+      "layoutToConvergenceMeasuredS": 11.875751074
+    }
+  ]
+}

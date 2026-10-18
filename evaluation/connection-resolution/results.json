@@ -1,0 +1,1129 @@
+{
+  "generatedAt": "2026-10-18T01:20:16.850Z",
+  "suiteSha256": "0e6d474c0cd3e64a486f9a64f76db53b98c7d87430a28ab5fb663fadc534ba51",
+  "summary": [
+    {
+      "key": "exact-id",
+      "label": "Original exact-ID matching",
+      "TP": 2,
+      "FP": 0,
+      "FN": 32,
+      "TN": 12,
+      "precision": 1,
+      "recall": 0.058823529411764705,
+      "accuracy": 0.30434782608695654
+    },
+    {
+      "key": "implemented",
+      "label": "Implemented name-based resolver",
+      "TP": 28,
+      "FP": 6,
+      "FN": 5,
+      "TN": 7,
+      "precision": 0.8235294117647058,
+      "recall": 0.8235294117647058,
+      "accuracy": 0.7608695652173914
+    },
+    {
+      "key": "prototype",
+      "label": "Prototype: word-boundary + acronym rule",
+      "TP": 20,
+      "FP": 0,
+      "FN": 14,
+      "TN": 12,
+      "precision": 1,
+      "recall": 0.5882352941176471,
+      "accuracy": 0.6956521739130435
+    }
+  ],
+  "perCategory": [
+    {
+      "category": "exact",
+      "n": 4,
+      "shouldLink": true,
+      "correct": {
+        "exact-id": 0,
+        "implemented": 4,
+        "prototype": 4
+      }
+    },
+    {
+      "category": "variant",
+      "n": 4,
+      "shouldLink": true,
+      "correct": {
+        "exact-id": 0,
+        "implemented": 4,
+        "prototype": 4
+      }
+    },
+    {
+      "category": "annotated",
+      "n": 4,
+      "shouldLink": true,
+      "correct": {
+        "exact-id": 0,
+        "implemented": 4,
+        "prototype": 4
+      }
+    },
+    {
+      "category": "acronym-long",
+      "n": 5,
+      "shouldLink": true,
+      "correct": {
+        "exact-id": 0,
+        "implemented": 5,
+        "prototype": 4
+      }
+    },
+    {
+      "category": "acronym-short",
+      "n": 3,
+      "shouldLink": true,
+      "correct": {
+        "exact-id": 0,
+        "implemented": 2,
+        "prototype": 0
+      }
+    },
+    {
+      "category": "partial-name",
+      "n": 5,
+      "shouldLink": true,
+      "correct": {
+        "exact-id": 0,
+        "implemented": 5,
+        "prototype": 0
+      }
+    },
+    {
+      "category": "prose",
+      "n": 3,
+      "shouldLink": true,
+      "correct": {
+        "exact-id": 0,
+        "implemented": 2,
+        "prototype": 2
+      }
+    },
+    {
+      "category": "abbreviation-not-in-name",
+      "n": 4,
+      "shouldLink": true,
+      "correct": {
+        "exact-id": 0,
+        "implemented": 0,
+        "prototype": 0
+      }
+    },
+    {
+      "category": "generic",
+      "n": 6,
+      "shouldLink": false,
+      "correct": {
+        "exact-id": 6,
+        "implemented": 2,
+        "prototype": 6
+      }
+    },
+    {
+      "category": "duplicate-name",
+      "n": 2,
+      "shouldLink": false,
+      "correct": {
+        "exact-id": 2,
+        "implemented": 2,
+        "prototype": 2
+      }
+    },
+    {
+      "category": "not-in-dataset",
+      "n": 4,
+      "shouldLink": false,
+      "correct": {
+        "exact-id": 4,
+        "implemented": 3,
+        "prototype": 4
+      }
+    },
+    {
+      "category": "id",
+      "n": 2,
+      "shouldLink": true,
+      "correct": {
+        "exact-id": 2,
+        "implemented": 2,
+        "prototype": 2
+      }
+    }
+  ],
+  "references": [
+    {
+      "id": "R01",
+      "source": "Federal Ministry of Education and Research (BMBF)",
+      "text": "Diakonie Deutschland",
+      "target": "Diakonie Deutschland",
+      "category": "exact",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": "Diakonie Deutschland",
+          "outcome": "TP"
+        },
+        "prototype": {
+          "linked": "Diakonie Deutschland",
+          "outcome": "TP"
+        }
+      }
+    },
+    {
+      "id": "R02",
+      "source": "Finnish National Agency for Education",
+      "text": "Ministry of Education and Culture",
+      "target": "Ministry of Education and Culture",
+      "category": "exact",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": "Ministry of Education and Culture",
+          "outcome": "TP"
+        },
+        "prototype": {
+          "linked": "Ministry of Education and Culture",
+          "outcome": "TP"
+        }
+      }
+    },
+    {
+      "id": "R03",
+      "source": "Serbian Commissariat for Refugees and Migration",
+      "text": "Group 484",
+      "target": "Group 484",
+      "category": "exact",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": "Group 484",
+          "outcome": "TP"
+        },
+        "prototype": {
+          "linked": "Group 484",
+          "outcome": "TP"
+        }
+      }
+    },
+    {
+      "id": "R04",
+      "source": "Greek Council for Refugees",
+      "text": "Solidarity Now",
+      "target": "Solidarity Now",
+      "category": "exact",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": "Solidarity Now",
+          "outcome": "TP"
+        },
+        "prototype": {
+          "linked": "Solidarity Now",
+          "outcome": "TP"
+        }
+      }
+    },
+    {
+      "id": "R05",
+      "source": "Erasmus+ Programme 2021–2027",
+      "text": "european commission - dg education and culture (dg eac)",
+      "target": "European Commission – DG Education and Culture (DG EAC)",
+      "category": "variant",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": "European Commission – DG Education and Culture (DG EAC)",
+          "outcome": "TP"
+        },
+        "prototype": {
+          "linked": "European Commission – DG Education and Culture (DG EAC)",
+          "outcome": "TP"
+        }
+      }
+    },
+    {
+      "id": "R06",
+      "source": "National Strategy for the Integration of Third-Country Nationals",
+      "text": "Humboldt University Berlin - Institute for Intercultural Education",
+      "target": "Humboldt University Berlin – Institute for Intercultural Education",
+      "category": "variant",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": "Humboldt University Berlin – Institute for Intercultural Education",
+          "outcome": "TP"
+        },
+        "prototype": {
+          "linked": "Humboldt University Berlin – Institute for Intercultural Education",
+          "outcome": "TP"
+        }
+      }
+    },
+    {
+      "id": "R07",
+      "source": "Ka Hikitia – Māori Education Strategy",
+      "text": "Te Puni Kokiri (Ministry for Maori Development)",
+      "target": "Te Puni Kōkiri (Ministry for Māori Development)",
+      "category": "variant",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": "Te Puni Kōkiri (Ministry for Māori Development)",
+          "outcome": "TP"
+        },
+        "prototype": {
+          "linked": "Te Puni Kōkiri (Ministry for Māori Development)",
+          "outcome": "TP"
+        }
+      }
+    },
+    {
+      "id": "R08",
+      "source": "Milano Cultural Mediation Programme",
+      "text": "MUNICIPALITY OF MILAN - INTERCULTURAL POLICIES OFFICE",
+      "target": "Municipality of Milan – Intercultural Policies Office",
+      "category": "variant",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": "Municipality of Milan – Intercultural Policies Office",
+          "outcome": "TP"
+        },
+        "prototype": {
+          "linked": "Municipality of Milan – Intercultural Policies Office",
+          "outcome": "TP"
+        }
+      }
+    },
+    {
+      "id": "R09",
+      "source": "General Act on Equal Treatment (Allgemeines Gleichbehandlungsgesetz)",
+      "text": "Bertelsmann Stiftung (s. stakeholder sheet)",
+      "target": "Bertelsmann Stiftung",
+      "category": "annotated",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": "Bertelsmann Stiftung",
+          "outcome": "TP"
+        },
+        "prototype": {
+          "linked": "Bertelsmann Stiftung",
+          "outcome": "TP"
+        }
+      }
+    },
+    {
+      "id": "R10",
+      "source": "Reception and Identification Law for Third-Country Nationals",
+      "text": "Greek Council for Refugees – legal aid partner",
+      "target": "Greek Council for Refugees",
+      "category": "annotated",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": "Greek Council for Refugees",
+          "outcome": "TP"
+        },
+        "prototype": {
+          "linked": "Greek Council for Refugees",
+          "outcome": "TP"
+        }
+      }
+    },
+    {
+      "id": "R11",
+      "source": "Norwegian Integration Act (Integreringsloven)",
+      "text": "Norwegian Refugee Council (NRC), see stakeholder list",
+      "target": "Norwegian Refugee Council",
+      "category": "annotated",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": "Norwegian Refugee Council",
+          "outcome": "TP"
+        },
+        "prototype": {
+          "linked": "Norwegian Refugee Council",
+          "outcome": "TP"
+        }
+      }
+    },
+    {
+      "id": "R12",
+      "source": "European University Association (EUA)",
+      "text": "Erasmus+ Programme 2021–2027 (main EU funding line)",
+      "target": "Erasmus+ Programme 2021–2027",
+      "category": "annotated",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": "Erasmus+ Programme 2021–2027",
+          "outcome": "TP"
+        },
+        "prototype": {
+          "linked": "Erasmus+ Programme 2021–2027",
+          "outcome": "TP"
+        }
+      }
+    },
+    {
+      "id": "R13",
+      "source": "National Integration Action Plan (Nationaler Aktionsplan Integration)",
+      "text": "BAMF",
+      "target": "Federal Office for Migration and Refugees (BAMF)",
+      "category": "acronym-long",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": "Federal Office for Migration and Refugees (BAMF)",
+          "outcome": "TP"
+        },
+        "prototype": {
+          "linked": "Federal Office for Migration and Refugees (BAMF)",
+          "outcome": "TP"
+        }
+      }
+    },
+    {
+      "id": "R14",
+      "source": "National Plan for Intercultural School Integration",
+      "text": "MIUR",
+      "target": "Italian Ministry of Education and Research (MIUR)",
+      "category": "acronym-long",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": "Italian Ministry of Education and Research (MIUR)",
+          "outcome": "TP"
+        },
+        "prototype": {
+          "linked": "Italian Ministry of Education and Research (MIUR)",
+          "outcome": "TP"
+        }
+      }
+    },
+    {
+      "id": "R15",
+      "source": "Norwegian Integration Act (Integreringsloven)",
+      "text": "IMDi",
+      "target": "Norwegian Centre for Multicultural Value Development (IMDi)",
+      "category": "acronym-long",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": "Norwegian Centre for Multicultural Value Development (IMDi)",
+          "outcome": "TP"
+        },
+        "prototype": {
+          "linked": null,
+          "outcome": "FN"
+        }
+      }
+    },
+    {
+      "id": "R16",
+      "source": "European Pillar of Social Rights Action Plan",
+      "text": "ENAR",
+      "target": "European Network Against Racism (ENAR)",
+      "category": "acronym-long",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": "European Network Against Racism (ENAR)",
+          "outcome": "TP"
+        },
+        "prototype": {
+          "linked": "European Network Against Racism (ENAR)",
+          "outcome": "TP"
+        }
+      }
+    },
+    {
+      "id": "R17",
+      "source": "Piano Nazionale per l'Integrazione",
+      "text": "ARCI",
+      "target": "ARCI (Associazione Ricreativa e Culturale Italiana)",
+      "category": "acronym-long",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": "ARCI (Associazione Ricreativa e Culturale Italiana)",
+          "outcome": "TP"
+        },
+        "prototype": {
+          "linked": "ARCI (Associazione Ricreativa e Culturale Italiana)",
+          "outcome": "TP"
+        }
+      }
+    },
+    {
+      "id": "R18",
+      "source": "DVV Global Adult Education Initiative",
+      "text": "DVV",
+      "target": "Deutscher Volkshochschul-Verband (DVV)",
+      "category": "acronym-short",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": "Deutscher Volkshochschul-Verband (DVV)",
+          "outcome": "TP"
+        },
+        "prototype": {
+          "linked": null,
+          "outcome": "FN"
+        }
+      }
+    },
+    {
+      "id": "R19",
+      "source": "Petition for Intercultural Teacher Training Reform",
+      "text": "ZEP",
+      "target": "Zones of Educational Priority (ZEP) Programme",
+      "category": "acronym-short",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": "Zones of Educational Priority (ZEP) Programme",
+          "outcome": "TP"
+        },
+        "prototype": {
+          "linked": null,
+          "outcome": "FN"
+        }
+      }
+    },
+    {
+      "id": "R20",
+      "source": "Norwegian Directorate for Education and Training",
+      "text": "LO",
+      "target": "Norwegian Confederation of Trade Unions (LO)",
+      "category": "acronym-short",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": "Aristotle University of Thessaloniki – Intercultural Education Lab",
+          "outcome": "FP"
+        },
+        "prototype": {
+          "linked": null,
+          "outcome": "FN"
+        }
+      }
+    },
+    {
+      "id": "R21",
+      "source": "Tapasā: Cultural Competencies Framework for Teachers of Pacific Learners",
+      "text": "Te Tāhuhu o te Mātauranga",
+      "target": "Ministry of Education (Te Tāhuhu o te Mātauranga)",
+      "category": "partial-name",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": "Ministry of Education (Te Tāhuhu o te Mātauranga)",
+          "outcome": "TP"
+        },
+        "prototype": {
+          "linked": null,
+          "outcome": "FN"
+        }
+      }
+    },
+    {
+      "id": "R22",
+      "source": "Ministry of Education (Te Tāhuhu o te Mātauranga)",
+      "text": "Ka Hikitia",
+      "target": "Ka Hikitia – Māori Education Strategy",
+      "category": "partial-name",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": "Ka Hikitia – Māori Education Strategy",
+          "outcome": "TP"
+        },
+        "prototype": {
+          "linked": null,
+          "outcome": "FN"
+        }
+      }
+    },
+    {
+      "id": "R23",
+      "source": "Norwegian Centre for Multicultural Value Development (IMDi)",
+      "text": "Integreringsloven",
+      "target": "Norwegian Integration Act (Integreringsloven)",
+      "category": "partial-name",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": "Norwegian Integration Act (Integreringsloven)",
+          "outcome": "TP"
+        },
+        "prototype": {
+          "linked": null,
+          "outcome": "FN"
+        }
+      }
+    },
+    {
+      "id": "R24",
+      "source": "Pacific Education Petition for Curriculum Reform",
+      "text": "Human Rights Commission",
+      "target": "Human Rights Commission NZ",
+      "category": "partial-name",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": "Human Rights Commission NZ",
+          "outcome": "TP"
+        },
+        "prototype": {
+          "linked": null,
+          "outcome": "FN"
+        }
+      }
+    },
+    {
+      "id": "R25",
+      "source": "Act on the Promotion of Immigrant Integration",
+      "text": "implemented through the Finnish National Agency for Education and municipalities",
+      "target": "Finnish National Agency for Education",
+      "category": "prose",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": "Finnish National Agency for Education",
+          "outcome": "TP"
+        },
+        "prototype": {
+          "linked": "Finnish National Agency for Education",
+          "outcome": "TP"
+        }
+      }
+    },
+    {
+      "id": "R26",
+      "source": "Diakonie Deutschland",
+      "text": "other instruments developed by the Federal Office for Migration and Refugees",
+      "target": "Federal Office for Migration and Refugees (BAMF)",
+      "category": "prose",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "prototype": {
+          "linked": null,
+          "outcome": "FN"
+        }
+      }
+    },
+    {
+      "id": "R27",
+      "source": "Law on Asylum and Temporary Protection",
+      "text": "monitored together with the Serbian Commissariat for Refugees and Migration",
+      "target": "Serbian Commissariat for Refugees and Migration",
+      "category": "prose",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": "Serbian Commissariat for Refugees and Migration",
+          "outcome": "TP"
+        },
+        "prototype": {
+          "linked": "Serbian Commissariat for Refugees and Migration",
+          "outcome": "TP"
+        }
+      }
+    },
+    {
+      "id": "R28",
+      "source": "Ministry of Education and Culture",
+      "text": "OKM",
+      "target": "Ministry of Education and Culture",
+      "category": "abbreviation-not-in-name",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "prototype": {
+          "linked": null,
+          "outcome": "FN"
+        }
+      }
+    },
+    {
+      "id": "R29",
+      "source": "Oslo Adult Education Agency",
+      "text": "Utdanningsdirektoratet",
+      "target": "Norwegian Directorate for Education and Training",
+      "category": "abbreviation-not-in-name",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "prototype": {
+          "linked": null,
+          "outcome": "FN"
+        }
+      }
+    },
+    {
+      "id": "R30",
+      "source": "Diakonie Deutschland",
+      "text": "AGG",
+      "target": "General Act on Equal Treatment (Allgemeines Gleichbehandlungsgesetz)",
+      "category": "abbreviation-not-in-name",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "prototype": {
+          "linked": null,
+          "outcome": "FN"
+        }
+      }
+    },
+    {
+      "id": "R31",
+      "source": "Finnish Refugee Council",
+      "text": "Opetushallitus",
+      "target": "Finnish National Agency for Education",
+      "category": "abbreviation-not-in-name",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "prototype": {
+          "linked": null,
+          "outcome": "FN"
+        }
+      }
+    },
+    {
+      "id": "R46",
+      "source": "Council Recommendation on Key Competences for Lifelong Learning",
+      "text": "DG EAC",
+      "target": "European Commission – DG Education and Culture (DG EAC)",
+      "category": "partial-name",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "FN"
+        },
+        "implemented": {
+          "linked": "European Commission – DG Education and Culture (DG EAC)",
+          "outcome": "TP"
+        },
+        "prototype": {
+          "linked": null,
+          "outcome": "FN"
+        }
+      }
+    },
+    {
+      "id": "R32",
+      "source": "Strategy for Social Inclusion of Roma 2022–2030",
+      "text": "Education",
+      "target": null,
+      "category": "generic",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "TN"
+        },
+        "implemented": {
+          "linked": "EU Strategic Framework for European Cooperation in Education and Training (ET2030)",
+          "outcome": "FP"
+        },
+        "prototype": {
+          "linked": null,
+          "outcome": "TN"
+        }
+      }
+    },
+    {
+      "id": "R33",
+      "source": "Finnish Refugee Council",
+      "text": "Migration",
+      "target": null,
+      "category": "generic",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "TN"
+        },
+        "implemented": {
+          "linked": "Serbian Commissariat for Refugees and Migration",
+          "outcome": "FP"
+        },
+        "prototype": {
+          "linked": null,
+          "outcome": "TN"
+        }
+      }
+    },
+    {
+      "id": "R34",
+      "source": "University of Oslo – Department of Education",
+      "text": "Research",
+      "target": null,
+      "category": "generic",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "TN"
+        },
+        "implemented": {
+          "linked": "Federal Ministry of Education and Research (BMBF)",
+          "outcome": "FP"
+        },
+        "prototype": {
+          "linked": null,
+          "outcome": "TN"
+        }
+      }
+    },
+    {
+      "id": "R35",
+      "source": "Municipality of Athens – Migrant Integration Centre",
+      "text": "local schools",
+      "target": null,
+      "category": "generic",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "TN"
+        },
+        "implemented": {
+          "linked": null,
+          "outcome": "TN"
+        },
+        "prototype": {
+          "linked": null,
+          "outcome": "TN"
+        }
+      }
+    },
+    {
+      "id": "R36",
+      "source": "Belgrade Open School",
+      "text": "civil society organisations",
+      "target": null,
+      "category": "generic",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "TN"
+        },
+        "implemented": {
+          "linked": null,
+          "outcome": "TN"
+        },
+        "prototype": {
+          "linked": null,
+          "outcome": "TN"
+        }
+      }
+    },
+    {
+      "id": "R37",
+      "source": "Council of Europe",
+      "text": "EU",
+      "target": null,
+      "category": "generic",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "TN"
+        },
+        "implemented": {
+          "linked": "EU Strategic Framework for European Cooperation in Education and Training (ET2030)",
+          "outcome": "FP"
+        },
+        "prototype": {
+          "linked": null,
+          "outcome": "TN"
+        }
+      }
+    },
+    {
+      "id": "R38",
+      "source": "Hellenic Ministry of Education and Religious Affairs",
+      "text": "Ministry of Education",
+      "target": null,
+      "category": "duplicate-name",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "TN"
+        },
+        "implemented": {
+          "linked": null,
+          "outcome": "TN"
+        },
+        "prototype": {
+          "linked": null,
+          "outcome": "TN"
+        }
+      }
+    },
+    {
+      "id": "R39",
+      "source": "Group 484",
+      "text": "ministry of education",
+      "target": null,
+      "category": "duplicate-name",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "TN"
+        },
+        "implemented": {
+          "linked": null,
+          "outcome": "TN"
+        },
+        "prototype": {
+          "linked": null,
+          "outcome": "TN"
+        }
+      }
+    },
+    {
+      "id": "R40",
+      "source": "Federal Ministry of Education and Research (BMBF)",
+      "text": "KMK (s. stakeholder sheet)",
+      "target": null,
+      "category": "not-in-dataset",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "TN"
+        },
+        "implemented": {
+          "linked": null,
+          "outcome": "TN"
+        },
+        "prototype": {
+          "linked": null,
+          "outcome": "TN"
+        }
+      }
+    },
+    {
+      "id": "R41",
+      "source": "Council of Europe",
+      "text": "UNESCO",
+      "target": null,
+      "category": "not-in-dataset",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "TN"
+        },
+        "implemented": {
+          "linked": null,
+          "outcome": "TN"
+        },
+        "prototype": {
+          "linked": null,
+          "outcome": "TN"
+        }
+      }
+    },
+    {
+      "id": "R42",
+      "source": "European Round Table for Diversity Management",
+      "text": "OECD PISA team",
+      "target": null,
+      "category": "not-in-dataset",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "TN"
+        },
+        "implemented": {
+          "linked": null,
+          "outcome": "TN"
+        },
+        "prototype": {
+          "linked": null,
+          "outcome": "TN"
+        }
+      }
+    },
+    {
+      "id": "R43",
+      "source": "Solidarity Now",
+      "text": "UN",
+      "target": null,
+      "category": "not-in-dataset",
+      "outcomes": {
+        "exact-id": {
+          "linked": null,
+          "outcome": "TN"
+        },
+        "implemented": {
+          "linked": "Interkulturelle Öffnung (Intercultural Opening) Guideline for Public Administration",
+          "outcome": "FP"
+        },
+        "prototype": {
+          "linked": null,
+          "outcome": "TN"
+        }
+      }
+    },
+    {
+      "id": "R44",
+      "source": "Diakonie Deutschland",
+      "text": "STK-IMP-022",
+      "target": "Federal Office for Migration and Refugees (BAMF)",
+      "category": "id",
+      "outcomes": {
+        "exact-id": {
+          "linked": "Federal Office for Migration and Refugees (BAMF)",
+          "outcome": "TP"
+        },
+        "implemented": {
+          "linked": "Federal Office for Migration and Refugees (BAMF)",
+          "outcome": "TP"
+        },
+        "prototype": {
+          "linked": "Federal Office for Migration and Refugees (BAMF)",
+          "outcome": "TP"
+        }
+      }
+    },
+    {
+      "id": "R45",
+      "source": "Council of Europe",
+      "text": "INS-IMP-007",
+      "target": "Council Recommendation on Key Competences for Lifelong Learning",
+      "category": "id",
+      "outcomes": {
+        "exact-id": {
+          "linked": "Council Recommendation on Key Competences for Lifelong Learning",
+          "outcome": "TP"
+        },
+        "implemented": {
+          "linked": "Council Recommendation on Key Competences for Lifelong Learning",
+          "outcome": "TP"
+        },
+        "prototype": {
+          "linked": "Council Recommendation on Key Competences for Lifelong Learning",
+          "outcome": "TP"
+        }
+      }
+    }
+  ]
+}

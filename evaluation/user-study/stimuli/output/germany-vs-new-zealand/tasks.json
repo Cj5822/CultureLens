@@ -1,0 +1,192 @@
+{
+  "pair": [
+    "Germany",
+    "New Zealand"
+  ],
+  "barWords": [
+    "itc",
+    "national",
+    "integration",
+    "policy",
+    "education",
+    "research",
+    "bicultural",
+    "federal",
+    "mandate",
+    "ori",
+    "pacific",
+    "germany's",
+    "centres",
+    "statutory",
+    "binding",
+    "practice",
+    "directly",
+    "instrument",
+    "outcomes",
+    "tiriti"
+  ],
+  "c1": {
+    "question": "Ignoring 'itc', which word appears most often for Germany?",
+    "answer": "integration",
+    "counts": [
+      "integration 14",
+      "federal 11",
+      "policy 9"
+    ],
+    "flags": []
+  },
+  "c2": {
+    "question": "Is the word 'national' used more often by Germany or by New Zealand?",
+    "options": [
+      "Germany",
+      "New Zealand",
+      "About the same"
+    ],
+    "answer": "New Zealand",
+    "counts": "Germany 7, New Zealand 10 (30%)",
+    "alternatives": [
+      {
+        "word": "policy",
+        "a": 9,
+        "b": 4,
+        "difference": "56%"
+      },
+      {
+        "word": "research",
+        "a": 8,
+        "b": 4,
+        "difference": "50%"
+      },
+      {
+        "word": "centres",
+        "a": 6,
+        "b": 2,
+        "difference": "67%"
+      },
+      {
+        "word": "instrument",
+        "a": 2,
+        "b": 4,
+        "difference": "50%"
+      }
+    ]
+  },
+  "c3": {
+    "question": "For New Zealand, which appears more often: 'mandate' or 'statutory'?",
+    "options": [
+      "mandate",
+      "statutory",
+      "About the same"
+    ],
+    "answer": "mandate",
+    "counts": "mandate 10, statutory 7 (30%)",
+    "alternatives": [
+      {
+        "x": "national",
+        "y": "statutory",
+        "cx": 10,
+        "cy": 7,
+        "difference": "30%"
+      },
+      {
+        "x": "pacific",
+        "y": "statutory",
+        "cx": 10,
+        "cy": 7,
+        "difference": "30%"
+      },
+      {
+        "x": "statutory",
+        "y": "education",
+        "cx": 7,
+        "cy": 6,
+        "difference": "14%"
+      },
+      {
+        "x": "statutory",
+        "y": "tiriti",
+        "cx": 7,
+        "cy": 6,
+        "difference": "14%"
+      },
+      {
+        "x": "education",
+        "y": "instrument",
+        "cx": 6,
+        "cy": 4,
+        "difference": "33%"
+      },
+      {
+        "x": "tiriti",
+        "y": "instrument",
+        "cx": 6,
+        "cy": 4,
+        "difference": "33%"
+      }
+    ]
+  },
+  "tokenisationIssues": {
+    "Germany": [
+      {
+        "original": "Länder",
+        "countedAs": [
+          "nder"
+        ],
+        "occurrences": 2
+      },
+      {
+        "original": "cross-Länder",
+        "countedAs": [
+          "cross-l",
+          "nder"
+        ],
+        "occurrences": 1
+      },
+      {
+        "original": "Öffnung'",
+        "countedAs": [
+          "ffnung"
+        ],
+        "occurrences": 1
+      },
+      {
+        "original": "federal-Länder",
+        "countedAs": [
+          "federal-l",
+          "nder"
+        ],
+        "occurrences": 1
+      }
+    ],
+    "New Zealand": [
+      {
+        "original": "Māori",
+        "countedAs": [
+          "ori"
+        ],
+        "occurrences": 10
+      },
+      {
+        "original": "Tapasā",
+        "countedAs": [
+          "tapas"
+        ],
+        "occurrences": 4
+      },
+      {
+        "original": "Māori'",
+        "countedAs": [
+          "ori"
+        ],
+        "occurrences": 1
+      },
+      {
+        "original": "Tapasā's",
+        "countedAs": [
+          "tapas"
+        ],
+        "occurrences": 1
+      }
+    ]
+  }
+}

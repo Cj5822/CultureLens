@@ -1,0 +1,120 @@
+{
+  "generatedAt": "2026-10-17T13:09:28.686Z",
+  "node": "v22.22.0",
+  "variants": [
+    {
+      "id": "v1-current-template",
+      "label": "Current template (Intro sheet; stakeholder header on row 6, instrument header on row 5)",
+      "expected": "4 stakeholders, 3 instruments, country on all rows, 1 warning (empty-name row)",
+      "observed": "As expected. 4 stakeholders, 3 instruments (7 entities); countries [\"Germany\"]; 1 warning(s): \"Stakeholders row 9: skipped - \"Name\" is empty\"",
+      "pass": true,
+      "problems": [],
+      "warnings": [
+        "Stakeholders row 9: skipped - \"Name\" is empty"
+      ]
+    },
+    {
+      "id": "v2-country-on-stakeholders-only",
+      "label": "Country label only on Stakeholders sheet (Instruments \"Country:\" value blank)",
+      "expected": "Instruments inherit the country; all 7 entities \"Germany\"",
+      "observed": "As expected. 4 stakeholders, 3 instruments (7 entities); countries [\"Germany\"]; 1 warning(s): \"Stakeholders row 9: skipped - \"Name\" is empty\"",
+      "pass": true,
+      "problems": [],
+      "warnings": [
+        "Stakeholders row 9: skipped - \"Name\" is empty"
+      ]
+    },
+    {
+      "id": "v3-sheet-name-variants",
+      "label": "Sheet names in different case / singular (\"STAKEHOLDER\", \"Instrument\")",
+      "expected": "Both sheets located; same result as the current template",
+      "observed": "As expected. 4 stakeholders, 3 instruments (7 entities); countries [\"Germany\"]; 1 warning(s): \"Stakeholders row 9: skipped - \"Name\" is empty\"",
+      "pass": true,
+      "problems": [],
+      "warnings": [
+        "Stakeholders row 9: skipped - \"Name\" is empty"
+      ]
+    },
+    {
+      "id": "v4-instruments-sheet-missing",
+      "label": "Instruments sheet missing",
+      "expected": "Explicit error naming the missing sheet",
+      "observed": "Error: \"Could not find an \"Instruments\" sheet in the workbook.\"",
+      "pass": true,
+      "problems": [],
+      "warnings": [],
+      "error": "Could not find an \"Instruments\" sheet in the workbook."
+    },
+    {
+      "id": "v5-short-stakeholder-metadata",
+      "label": "Stakeholder metadata block one row shorter (no spacer row; header on row 5)",
+      "expected": "Header row found; 4 stakeholders imported",
+      "observed": "0 stakeholders, 3 instruments (3 entities); countries [\"Germany\"]; 4 warning(s): \"Stakeholders row 7: skipped - \"Name\" is empty\"; \"Stakeholders row 8: skipped - \"Name\" is empty\"; \"Stakeholders row 9: skipped - \"Name\" is empty\"; \"Stakeholders row 10: skipped - \"Name\" is empty\"",
+      "pass": false,
+      "problems": [
+        "0 of 4 stakeholders imported",
+        "4 warning(s): \"Stakeholders row 7: skipped - \"Name\" is empty\"; \"Stakeholders row 8: skipped - \"Name\" is empty\"; \"Stakeholders row 9: skipped - \"Name\" is empty\"; \"Stakeholders row 10: skipped - \"Name\" is empty\""
+      ],
+      "warnings": [
+        "Stakeholders row 7: skipped - \"Name\" is empty",
+        "Stakeholders row 8: skipped - \"Name\" is empty",
+        "Stakeholders row 9: skipped - \"Name\" is empty",
+        "Stakeholders row 10: skipped - \"Name\" is empty"
+      ]
+    },
+    {
+      "id": "v6-legacy-headers-row-1",
+      "label": "Legacy file: no Intro sheet, no metadata, headers on row 1",
+      "expected": "All rows imported (4 + 3 entities)",
+      "observed": "0 stakeholders, 0 instruments (0 entities); countries []; 2 warning(s): \"Stakeholders row 6: skipped - \"Name\" is empty\"; \"Instruments row 4: skipped - \"Official name\" is empty\"",
+      "pass": false,
+      "problems": [
+        "0 of 4 stakeholders imported",
+        "0 of 3 instruments imported",
+        "2 warning(s): \"Stakeholders row 6: skipped - \"Name\" is empty\"; \"Instruments row 4: skipped - \"Official name\" is empty\""
+      ],
+      "warnings": [
+        "Stakeholders row 6: skipped - \"Name\" is empty",
+        "Instruments row 4: skipped - \"Official name\" is empty"
+      ]
+    }
+  ],
+  "fieldChecks": [
+    {
+      "check": "Mixed-case actor type (\"Government\", \"ADMINISTRATION\", \"ngo\")",
+      "expected": "government, administration, NGO",
+      "observed": "government, administration, NGO",
+      "pass": true
+    },
+    {
+      "check": "Mixed-case impact and instrument type (\"BINDING\", \"Highly Influential\", \"Law\", \"STRATEGY\")",
+      "expected": "binding, highly influential, law, strategy",
+      "observed": "binding, highly influential, law, strategy",
+      "pass": true
+    },
+    {
+      "check": "Multi-valued cells split on \";\", \",\" and \"/\"",
+      "expected": "[Education, Migration]; [Migration, Inter- and Transcultural Competences]; [Culture, Education]",
+      "observed": "[Education, Migration]; [Migration, Inter- and Transcultural Competences]; [Culture, Education]",
+      "pass": true
+    },
+    {
+      "check": "Row with empty name skipped with a warning",
+      "expected": "1 warning mentioning \"Name\"",
+      "observed": "\"Stakeholders row 9: skipped - \"Name\" is empty\"",
+      "pass": true
+    },
+    {
+      "check": "Connections split on \";\" (cell with two references)",
+      "expected": "[\"Federal Ministry for Learning (FML)\", \"Intercultural Schools Act\"]",
+      "observed": "[\"Federal Ministry for Learning (FML)\",\"Intercultural Schools Act\"]",
+      "pass": true
+    },
+    {
+      "check": "Out-of-enumeration values (\"Public administration\", \"very influential\", \"follow up\", \"regulation\", \"in progress\")",
+      "expected": "Rows imported; a warning for each value replaced by a default",
+      "observed": "Imported as actorType=other, impact=advisory, nextSteps=monitor, instrumentType=other, status=development; 0 warning(s)",
+      "pass": false
+    }
+  ]
+}

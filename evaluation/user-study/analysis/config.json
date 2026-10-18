@@ -1,0 +1,65 @@
+{
+  "_comment": [
+    "Maps the analysis onto the column headers of the Google Forms response export.",
+    "Each 'match' is a case-insensitive regular expression searched for in the header text.",
+    "If several headers match, 'nth' (1-based) picks one; otherwise the match must be unique.",
+    "Defaults match the titles created by user-study/form/Code.gs. If your export uses",
+    "different wording, edit the patterns: analyse.py lists every field it cannot find."
+  ],
+  "profile": {
+    "role":        { "match": "what is your role" },
+    "familiarity": { "match": "how familiar are you" },
+    "chart_use":   { "match": "how often do you use charts" }
+  },
+  "views": ["Map View", "Analytics", "Parallel Sets", "Cluster Analysis", "Network Graph", "Text Analysis"],
+  "view_fields": {
+    "task":        { "match": "^{view}: (?!about how long|how easy|how confident|i could use|this view gave|did this view)" },
+    "time":        { "match": "^{view}: about how long" },
+    "ease":        { "match": "^{view}: how easy" },
+    "confidence":  { "match": "^{view}: how confident" },
+    "reuse":       { "match": "^{view}: i could use this view again" },
+    "accurate":    { "match": "^{view}: this view gave me an accurate picture" },
+    "spreadsheet": { "match": "^{view}: did this view show you anything a spreadsheet" }
+  },
+  "view_answers": {
+    "Map View":         { "all_of": ["new\\s*zealand|\\bnz\\b|aotearoa", "\\b4\\b|\\bfour\\b"] },
+    "Analytics":        { "all_of": ["\\b19\\b|\\bnineteen\\b"] },
+    "Parallel Sets":    { "all_of": ["\\b8\\b|\\beight\\b"] },
+    "Cluster Analysis": { "all_of": ["\\b11\\b|\\beleven\\b"] },
+    "Network Graph":    { "all_of": ["\\b2\\b|\\btwo\\b"] },
+    "Text Analysis":    { "all_of": ["\\bintegration\\b", "\\bbicultural\\b"] }
+  },
+  "sus":       { "match": "^SUS {i}:" },
+  "coherence": [
+    { "key": "consistent",    "match": "moving between the views felt consistent" },
+    { "key": "understanding", "match": "several views helped me understand" }
+  ],
+  "ranking":   { "match": "rank the six views by usefulness.*\\[{view}\\]" },
+  "favourites": {
+    "fastest":   { "match": "which view was fastest" },
+    "difficult": { "match": "which view was most difficult" },
+    "enjoyable": { "match": "which view was most enjoyable" }
+  },
+  "rq4": {
+    "routing": { "match": "born odd or even" },
+    "group_of_routing_answer": { "Odd": "A", "Even": "B" },
+    "sections": {
+      "A": { "cloud": { "section": "A1", "pair": "P1" }, "bar": { "section": "A2", "pair": "P2" } },
+      "B": { "cloud": { "section": "B2", "pair": "P2" }, "bar": { "section": "B1", "pair": "P1" } }
+    },
+    "fields": {
+      "c1":         { "match": "^\\[{section}\\] C1:" },
+      "c2":         { "match": "^\\[{section}\\] C2:" },
+      "c3":         { "match": "^\\[{section}\\] C3:" },
+      "time":       { "match": "^\\[{section}\\] about how long" },
+      "ease":       { "match": "^\\[{section}\\] how easy" },
+      "confidence": { "match": "^\\[{section}\\] how confident" }
+    },
+    "answer_key": "../stimuli/output/answer-key.json",
+    "pair_keys": { "P1": "germany-vs-new-zealand", "P2": "finland-vs-italy" },
+    "preference": {
+      "overview":   { "match": "prefer for an overview of the themes" },
+      "comparison": { "match": "prefer for comparing word frequencies" }
+    }
+  }
+}

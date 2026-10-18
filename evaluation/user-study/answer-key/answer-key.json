@@ -1,0 +1,209 @@
+{
+  "generatedAt": "2026-10-17T13:10:07.315Z",
+  "answers": {
+    "map": {
+      "byCountry": [
+        {
+          "country": "New Zealand",
+          "count": 4
+        },
+        {
+          "country": "EU",
+          "count": 3
+        },
+        {
+          "country": "Germany",
+          "count": 3
+        },
+        {
+          "country": "Norway",
+          "count": 3
+        },
+        {
+          "country": "Finland",
+          "count": 2
+        },
+        {
+          "country": "Italy",
+          "count": 2
+        },
+        {
+          "country": "Greece",
+          "count": 1
+        },
+        {
+          "country": "Serbia",
+          "count": 1
+        }
+      ],
+      "leaders": [
+        {
+          "country": "New Zealand",
+          "count": 4
+        }
+      ],
+      "count": 4
+    },
+    "analyticsImplementation": 19,
+    "parallelSetsLawBinding": 8,
+    "clusterAdministration": 11,
+    "network": {
+      "from": [
+        "Federal Ministry of Education and Research (BMBF)"
+      ],
+      "to": [
+        "Diakonie Deutschland"
+      ],
+      "steps": 2,
+      "path": [
+        "Federal Ministry of Education and Research (BMBF)",
+        "Federal Office for Migration and Refugees (BAMF)",
+        "Diakonie Deutschland"
+      ]
+    },
+    "text": [
+      {
+        "country": "Germany",
+        "top": [
+          {
+            "text": "integration",
+            "count": 14
+          },
+          {
+            "text": "federal",
+            "count": 11
+          },
+          {
+            "text": "policy",
+            "count": 9
+          },
+          {
+            "text": "research",
+            "count": 8
+          },
+          {
+            "text": "germany's",
+            "count": 7
+          }
+        ]
+      },
+      {
+        "country": "New Zealand",
+        "top": [
+          {
+            "text": "bicultural",
+            "count": 11
+          },
+          {
+            "text": "ori",
+            "count": 11
+          },
+          {
+            "text": "mandate",
+            "count": 10
+          },
+          {
+            "text": "national",
+            "count": 10
+          },
+          {
+            "text": "pacific",
+            "count": 10
+          }
+        ]
+      }
+    ]
+  },
+  "facts": {
+    "files": [
+      "CultureLens_Demo_EU.xlsx",
+      "CultureLens_Demo_Finland.xlsx",
+      "CultureLens_Demo_Germany.xlsx",
+      "CultureLens_Demo_Greece.xlsx",
+      "CultureLens_Demo_Italy.xlsx",
+      "CultureLens_Demo_New_Zealand.xlsx",
+      "CultureLens_Demo_Norway.xlsx",
+      "CultureLens_Demo_Serbia.xlsx"
+    ],
+    "entities": 78,
+    "stakeholders": 48,
+    "instruments": 30,
+    "parseWarnings": 0,
+    "perCountry": [
+      {
+        "country": "EU",
+        "stakeholders": 6,
+        "instruments": 4
+      },
+      {
+        "country": "Finland",
+        "stakeholders": 6,
+        "instruments": 4
+      },
+      {
+        "country": "Germany",
+        "stakeholders": 6,
+        "instruments": 4
+      },
+      {
+        "country": "Greece",
+        "stakeholders": 6,
+        "instruments": 4
+      },
+      {
+        "country": "Italy",
+        "stakeholders": 6,
+        "instruments": 4
+      },
+      {
+        "country": "New Zealand",
+        "stakeholders": 6,
+        "instruments": 4
+      },
+      {
+        "country": "Serbia",
+        "stakeholders": 6,
+        "instruments": 4
+      },
+      {
+        "country": "Norway",
+        "stakeholders": 6,
+        "instruments": 2
+      }
+    ],
+    "entitiesDeclaringConnections": 71,
+    "rawReferences": 137,
+    "resolvedReferences": 137,
+    "unresolvedReferences": 0,
+    "edges": 77,
+    "crossCountryEdges": [
+      "Ministry of Education and Culture (Finland) — European Commission – DG Education and Culture (DG EAC) (EU)",
+      "Serbian Ministry of Education and Science (Serbia) — Council of Europe (EU)"
+    ],
+    "components": 15,
+    "isolatedNodes": [
+      "Finnish Cultural Foundation (Finland)",
+      "Hellenic Federation of Enterprises (SEV) (Greece)",
+      "Confindustria – Diversity Management Working Group (Italy)",
+      "Business NZ – Cultural Capability Programme (New Zealand)",
+      "Norwegian Confederation of Trade Unions (LO) (Norway)",
+      "Serbian Chamber of Commerce – Diversity Council (Serbia)"
+    ],
+    "linkedClusters": 9,
+    "linkedClusterSizes": [
+      22,
+      10,
+      9,
+      9,
+      7,
+      5,
+      4,
+      4,
+      2
+    ],
+    "textAnalysis": {
+      "stopWords": 145,
+      "wordsPerCloud": 60
+    }
+  }
+}
